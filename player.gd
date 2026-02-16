@@ -2,9 +2,11 @@ extends Area2D
 
 const STEP = 16
 var can_swim : bool = false
+
 signal moving
 var valid_move = false
 var next_pos : Vector2
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -12,7 +14,7 @@ func _ready() -> void:
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	var move_x = Input.get_axis("left","right")
 	var move_y = Input.get_axis("up","down")
 	var move = Input.is_action_just_pressed("move")
