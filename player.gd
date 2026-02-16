@@ -1,7 +1,7 @@
 extends Area2D
 
 const STEP = 16
-var can_swim : bool = false
+var can_swim : bool = true
 
 signal moving
 var valid_move = false
