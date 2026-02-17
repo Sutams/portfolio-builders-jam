@@ -143,11 +143,8 @@ func _on_player_moving() -> void:
 ##
 func _on_area_camera_area_exited(area: Area2D) -> void:
 	if area.is_in_group("player"):
-		print("area.direction ", area.direction)
-		print("camera_vector ", camera_vector)
 		camera_vector.x += area.direction.x
 		camera_vector.y += area.direction.y
-		print("after sum ", camera_vector)
 		camera.position.x = camera_origin.x + camera_vector.x * TILE_SIZE * CAM_X_OFFSET
 		camera.position.y = camera_origin.y + camera_vector.y * TILE_SIZE * CAM_Y_OFFSET
 		# Gives small to avoid area moving bug
