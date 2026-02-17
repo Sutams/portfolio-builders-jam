@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <svg version="1.1" width="128" height="96" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
-<rect x="0" y="0" width="16" height="16" fill="#1A237E" />
-<rect x="16" y="0" width="16" height="16" fill="#283593" />
-<rect x="32" y="0" width="16" height="16" fill="#303F9F" />
-<rect x="48" y="0" width="16" height="16" fill="#3949AB" />
-<rect x="64" y="0" width="16" height="16" fill="#3F51B5" />
-<rect x="80" y="0" width="16" height="16" fill="#5C6BC0" />
-<rect x="96" y="0" width="16" height="16" fill="#7986CB" />
-<rect x="112" y="0" width="16" height="16" fill="#9FA8DA" />
+<rect x="0" y="0" width="16" height="16" fill="#010A46" />
+<rect x="16" y="0" width="16" height="16" fill="#011450" />
+<rect x="32" y="0" width="16" height="16" fill="#011E5A" />
+<rect x="48" y="0" width="16" height="16" fill="#012864" />
+<rect x="64" y="0" width="16" height="16" fill="#01326E" />
+<rect x="80" y="0" width="16" height="16" fill="#013C78" />
+<rect x="96" y="0" width="16" height="16" fill="#014682" />
+<rect x="112" y="0" width="16" height="16" fill="#01508C" />
 <rect x="0" y="16" width="16" height="16" fill="#01579B" />
 <rect x="16" y="16" width="16" height="16" fill="#0277BD" />
 <rect x="32" y="16" width="16" height="16" fill="#0288D1" />
