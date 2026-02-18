@@ -28,7 +28,8 @@ const type = { "Deep Water" : 0, # <- Tilemap atlas Y-coord
 				"Rock" : 5
 			}
 # List of tiles the player can move on
-var allowed_tiles = [type["Grass"], type["Sand"], type["Wood"]]
+var allowed_tiles = [type["Grass"], type["Sand"]]
+var obstacle_tiles = [type["Rock"]]
 var water_tiles = [type["Deep Water"], type["Water"]]
 
 ##
@@ -79,9 +80,16 @@ func _process(delta: float) -> void:
 		time_in_water = 0
 	# Respawn player in water after too long
 	if time_in_water >= MAX_WATER_TIME:
+		player.respawning = true
 		player.position = $Checkpoint.position
+		# Reset camera to spawn (HAVE TO CHANGE LATER TO CHANGE TO CHECKPOINT)
+		# Maybe store the checkpoints "area" ej: checkpoint 3 -> zona (-2,2)
 		camera_vector.x = 0
 		camera_vector.y = 0
+		move_camera()
+		# gives enough time for the camera to reset without input changing the direction
+		await get_tree().create_timer(1).timeout
+		player.respawning = false
 
 ## Manages the rise and lowering of the tides by changing the tilemap
 ##
@@ -129,25 +137,29 @@ func _on_tide_timer_timeout() -> void:
 ## tilemap.get_cell_atlas_coords(Vector2i(x,y))
 ## it returns e.g. (0,0) or (3,1) which are the tiles on the *Atlas*
 func _on_player_moving() -> void:
-	#var next_tilemap_position = to_coords(player.next_pos)
+	var next_tilemap_position = to_coords(player.next_pos)
 	## Check if next move is allowed based on tile's Y-coord on atlas tilemap
-	#if tilemap.get_cell_atlas_coords(next_tilemap_position).y in allowed_tiles:
-		#player.valid_move = true
+	if tilemap.get_cell_atlas_coords(next_tilemap_position).y in obstacle_tiles:
+		player.valid_move = false
 	#elif player.next_pos == $Block.position:
-	player.valid_move = true
-	#else:
-		#player.valid_move = false
+	#player.valid_move = true
+	else:
+		player.valid_move = true
 	pass
 
 ## Moves the camera depending on players direction
 ##
+func move_camera():
+	camera.position.x = camera_origin.x + camera_vector.x * TILE_SIZE * CAM_X_OFFSET
+	camera.position.y = camera_origin.y + camera_vector.y * TILE_SIZE * CAM_Y_OFFSET
+	# Gives small to avoid area moving bug
+	area_camera.set_deferred("monitoring",false)
+	await get_tree().create_timer(.1).timeout
+	area_camera.set_deferred("monitoring",true)
+
 func _on_area_camera_area_exited(area: Area2D) -> void:
 	if area.is_in_group("player"):
+		print(area.direction)
 		camera_vector.x += area.direction.x
 		camera_vector.y += area.direction.y
-		camera.position.x = camera_origin.x + camera_vector.x * TILE_SIZE * CAM_X_OFFSET
-		camera.position.y = camera_origin.y + camera_vector.y * TILE_SIZE * CAM_Y_OFFSET
-		# Gives small to avoid area moving bug
-		area_camera.set_deferred("monitoring",false)
-		await get_tree().create_timer(.1).timeout
-		area_camera.set_deferred("monitoring",true)
+		move_camera()

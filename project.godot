@@ -16,6 +16,16 @@ run/main_scene="res://Level/level.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
+[display]
+
+window/size/viewport_width=480
+window/size/viewport_height=270
+window/size/mode=3
+window/size/window_width_override=1100
+window/size/window_height_override=620
+window/stretch/mode="viewport"
+window/stretch/scale_mode="integer"
+
 [input]
 
 up={

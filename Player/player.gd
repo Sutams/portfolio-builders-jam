@@ -2,6 +2,7 @@ extends Area2D
 
 const STEP = 16
 var can_swim : bool = true
+var respawning : bool
 
 signal moving
 var valid_move = false
@@ -10,6 +11,7 @@ var direction : Vector2
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	respawning = false
 	pass # Replace with function body.
 
 
@@ -19,6 +21,10 @@ func _process(_delta: float) -> void:
 	var move_y = Input.get_axis("up","down")
 	var move = Input.is_action_just_pressed("move")
 	direction = Vector2(move_x, move_y)
+	
+	if respawning:
+		direction = Vector2.ZERO
+	
 	# Need to check if movement is allowed!
 	# Get the position you'll be in from the map and see if its water 
 	if move:
