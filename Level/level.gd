@@ -54,11 +54,24 @@ func _ready() -> void:
 		var tile = tilemap.get_cell_atlas_coords(cell)
 		if tile.x > max_tide:
 			max_tide = tile.x
+	
 
 ## Converts a position into tilemap coordinates
 func to_coords(pos: Vector2) -> Vector2i:
 	return Vector2i((pos / TILE_SIZE) - OFFSET)
 
+
+func respawn():
+	player.respawning = true
+	player.position = $Checkpoint.position
+	# Reset camera to spawn (HAVE TO CHANGE LATER TO CHANGE TO CHECKPOINT)
+	# Maybe store the checkpoints "area" ej: checkpoint 3 -> zona (-2,2)
+	camera_vector.x = 0
+	camera_vector.y = 0
+	move_camera()
+	# gives enough time for the camera to reset without input changing the direction
+	await get_tree().create_timer(1).timeout
+	player.respawning = false
 ##
 ##
 func _process(delta: float) -> void:
@@ -80,16 +93,7 @@ func _process(delta: float) -> void:
 		time_in_water = 0
 	# Respawn player in water after too long
 	if time_in_water >= MAX_WATER_TIME:
-		player.respawning = true
-		player.position = $Checkpoint.position
-		# Reset camera to spawn (HAVE TO CHANGE LATER TO CHANGE TO CHECKPOINT)
-		# Maybe store the checkpoints "area" ej: checkpoint 3 -> zona (-2,2)
-		camera_vector.x = 0
-		camera_vector.y = 0
-		move_camera()
-		# gives enough time for the camera to reset without input changing the direction
-		await get_tree().create_timer(1).timeout
-		player.respawning = false
+		respawn()
 
 ## Manages the rise and lowering of the tides by changing the tilemap
 ##

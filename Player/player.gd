@@ -24,6 +24,7 @@ func _process(_delta: float) -> void:
 	
 	if respawning:
 		direction = Vector2.ZERO
+		return
 	
 	# Need to check if movement is allowed!
 	# Get the position you'll be in from the map and see if its water 
