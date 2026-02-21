@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cpjglweyyhegc"]
 
-[ext_resource type="Texture2D" uid="uid://bll1ydwdf8qce" path="res://icon.svg" id="1_im0tn"]
 [ext_resource type="Script" uid="uid://ctdsay2cqmohs" path="res://Block/block.gd" id="1_xfwl5"]
+[ext_resource type="Texture2D" uid="uid://bx1xq00wj6m75" path="res://Block/barrel.svg" id="2_4x3rt"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1ainy"]
 size = Vector2(14, 14)
@@ -11,8 +11,8 @@ script = ExtResource("1_xfwl5")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1134157223]
 modulate = Color(0.7273974, 0.29748532, 0, 1)
-scale = Vector2(0.109375, 0.109375)
-texture = ExtResource("1_im0tn")
+scale = Vector2(0.99999994, 0.99999994)
+texture = ExtResource("2_4x3rt")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=527335983]
 shape = SubResource("RectangleShape2D_1ainy")

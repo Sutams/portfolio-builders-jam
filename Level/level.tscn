@@ -4,7 +4,6 @@
 [ext_resource type="Texture2D" uid="uid://dh4s6l6pb67fo" path="res://Level/tilemap-Sheet.svg" id="1_oi3di"]
 [ext_resource type="PackedScene" uid="uid://bkq7kycdcrqxm" path="res://Player/player.tscn" id="3_0b4ue"]
 [ext_resource type="PackedScene" uid="uid://eojqh7r1p2te" path="res://Checkpoint/checkpoint.tscn" id="4_0b4ue"]
-[ext_resource type="Texture2D" uid="uid://bkymrq8jqqmhy" path="res://Player/player.png" id="4_nk1il"]
 [ext_resource type="PackedScene" uid="uid://cpjglweyyhegc" path="res://Block/block.tscn" id="5_f2txt"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0b4ue"]
@@ -83,16 +82,15 @@ position = Vector2(40, 24)
 [node name="Sprite2D" parent="Player" index="0" unique_id=1312001199]
 texture_filter = 1
 scale = Vector2(0.99999994, 0.99999994)
-texture = ExtResource("4_nk1il")
 
 [node name="Checkpoint" parent="." unique_id=2090551216 instance=ExtResource("4_0b4ue")]
-position = Vector2(25, 24)
+position = Vector2(24, 24)
 
 [node name="TideTimer" type="Timer" parent="." unique_id=1438488177]
 autostart = true
 
 [node name="Block" parent="." unique_id=1012717656 instance=ExtResource("5_f2txt")]
-position = Vector2(297, 104)
+position = Vector2(296, 104)
 metadata/_edit_group_ = true
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=721818192]
