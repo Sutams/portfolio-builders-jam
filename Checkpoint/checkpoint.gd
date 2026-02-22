@@ -2,7 +2,10 @@ extends Area2D
 
 @onready var animation = $AnimatedSprite2D
 
-var active : bool
+@export var active : bool
+var can_tp : bool
+
+signal last_visited(pos)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -17,6 +20,9 @@ func _process(_delta: float) -> void:
 
 func _on_area_entered(area: Area2D) -> void:
 	if area.is_in_group("player"):
+		can_tp = true
 		active = true
 		animation.play("active")
+		
+		last_visited.emit(position)
 	pass # Replace with function body.

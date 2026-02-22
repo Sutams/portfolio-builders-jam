@@ -1,77 +1,113 @@
 extends Node2D
 
-@onready var tilemap = $TileMapLayer
+# Scenes to instantiate
+@export var checkpoint_scene : PackedScene
+
+# Nodes to work with
+@onready var tilemap = $Ground
+@onready var tilemap_above = $AboveWater
 @onready var tide_timer = $TideTimer
+@onready var fall_timer = $FallTimer
 @onready var player = $Player
 @onready var camera = $Camera2D
 @onready var area_camera = $Camera2D/AreaCamera
+@onready var checkpoint_container = $Checkpoints
 
-const CAM_X_OFFSET = 23
-const CAM_Y_OFFSET = 13
-const TILE_SIZE = 16
+# Constant variables
+const TILE_SIZE = 16 # Square tiles of 16px size
 const OFFSET = Vector2(.5,.5)
 const MAX_WATER_TIME = 0.2
 
+## Rest of variables
+var cam_x_offset : int 
+var cam_y_offset : int
 var camera_origin : Vector2
 var camera_vector = Vector2.ZERO
-var time_in_water : float
-var rise : bool
-var tide_height : int
+var time_in_water = 0.0
+var rise = true
+var tide_height = 0
 var max_tide : int
-
+# Tilemap related
 var tilemap_copy : TileMapLayer
-const type = { "Deep Water" : 0, # <- Tilemap atlas Y-coord
+var tilemap_above_copy : TileMapLayer
+const type = { "Deep Water" : 0, # <- Y-coord on tilemap atlas
 				"Water" : 1,
 				"Grass" : 2,
 				"Sand" : 3,
 				"Wood" : 4,
-				"Rock" : 5
+				"Wall" : 5,
+				"TBD" : 6,
+				"Lava" : 7,
+				"Lilypad" : 8,
+				"Barrel" : 9,
+				"Rock" : 10,
 			}
 # List of tiles the player can move on
-var allowed_tiles = [type["Grass"], type["Sand"]]
-var obstacle_tiles = [type["Rock"]]
 var water_tiles = [type["Deep Water"], type["Water"]]
+var flood_tiles = [type["Grass"], type["Sand"]]
+var obstacle_tiles = [type["Rock"]]
+var stand_tiles = [type["Lilypad"], type["Barrel"]]
 
-##
-##
-func _ready() -> void:
-	# Initialize variables
-	tide_height = 0
-	rise = true
-	time_in_water = 0
-	camera_origin = camera.position
-	
-	# Create copy tilemap to keep track of original values
-	tilemap_copy = TileMapLayer.new()
-	tilemap_copy.set_tile_map_data_from_array(tilemap.get_tile_map_data_as_array())
-	
-	# Automatically determines how much the water rises
-	# based on max n° of tiles in the X-axis
-	# (every row should have the same amount!)
-	max_tide = 0
-	var used_cells = tilemap.get_used_cells()
-	for cell in used_cells:
-		var tile = tilemap.get_cell_atlas_coords(cell)
-		if tile.x > max_tide:
-			max_tide = tile.x
-	
+# List to keep tiles that have been stood on
+var falling_cells = []
+var rising_cells = []
+
+# Checkpoints spawn coords
+var checkpoint_coords = [Vector2(1,1), Vector2(17,18), Vector2(53,16), Vector2(36,-9), Vector2(16,-21), Vector2(-35,-21), Vector2(-19,24)]
+var checkpoints = []
+var last_visited_checkpoint
 
 ## Converts a position into tilemap coordinates
+##
 func to_coords(pos: Vector2) -> Vector2i:
 	return Vector2i((pos / TILE_SIZE) - OFFSET)
 
+##
+##
+func last_checkpoint(pos : Vector2):
+	for i in len(checkpoints):
+		if Vector2(to_coords(pos)) == checkpoint_coords[i]:
+			last_visited_checkpoint = checkpoints[i]
+		else:
+			checkpoints[i].active = false
 
+##
+##
+func camera_vector_range(vec : Vector2):
+	var range_x = int(vec.x / cam_x_offset)
+	var range_y = int(vec.y / cam_y_offset)
+
+	if vec.x < 0:
+		range_x -= 1
+	if vec.y < 0:
+		range_y -= 1
+	camera_vector.x = range_x
+	camera_vector.y = range_y
+
+## 
+##
 func respawn():
 	player.respawning = true
-	player.position = $Checkpoint.position
-	# Reset camera to spawn (HAVE TO CHANGE LATER TO CHANGE TO CHECKPOINT)
-	# Maybe store the checkpoints "area" ej: checkpoint 3 -> zona (-2,2)
-	camera_vector.x = 0
-	camera_vector.y = 0
+	# Get last visited checkpoint
+	for checkpoint in checkpoints:
+		if checkpoint.active:
+			last_visited_checkpoint = checkpoint
+	if last_visited_checkpoint:
+		player.position = last_visited_checkpoint.position
+	else:
+		player.position = (Vector2(1,1) + OFFSET) * TILE_SIZE
+
+	# Values between 23x and 13x have to give x y coords for camera
+	if last_visited_checkpoint: 
+		camera_vector_range(Vector2(to_coords(last_visited_checkpoint.position)))
+	else:
+		camera_vector.x = 0
+		camera_vector.y = 0
 	move_camera()
 	# gives enough time for the camera to reset without input changing the direction
 	await get_tree().create_timer(1).timeout
 	player.respawning = false
+
 ##
 ##
 func _process(delta: float) -> void:
@@ -89,8 +125,11 @@ func _process(delta: float) -> void:
 	# Increase timer
 	if tilemap.get_cell_atlas_coords(player_pos).y in water_tiles:
 		time_in_water += delta
+		if tilemap_above.get_cell_atlas_coords(player_pos).y in stand_tiles:
+			time_in_water = 0
 	else:
 		time_in_water = 0
+
 	# Respawn player in water after too long
 	if time_in_water >= MAX_WATER_TIME:
 		respawn()
@@ -105,7 +144,7 @@ func _on_tide_timer_timeout() -> void:
 		var tile_copy = tilemap_copy.get_cell_atlas_coords(cell)
 		if rise:
 			# slowly turn into water
-			if tile.x == tide_height and tile.y in allowed_tiles:
+			if tile.x == tide_height and tile.y in flood_tiles:
 				tilemap.set_cell(cell, 0 , Vector2i(max_tide, type["Water"]))
 			# if already water, change its color to deeper water
 			elif tile.x > 0 and tile.y == type["Water"]:
@@ -114,16 +153,17 @@ func _on_tide_timer_timeout() -> void:
 				tilemap.set_cell(cell, 0 , Vector2i(tile.x-1, type["Deep Water"]))
 		else:
 			# slowly go back to normal
-			if tile_copy.x == tide_height-1 and tile_copy.y in allowed_tiles:
+			if tile_copy.x == tide_height-1 and tile_copy.y in flood_tiles:
 				tilemap.set_cell(cell, 0 , tile_copy)
 			# if next time the tile is gonna be back to normal then change the water color
-			elif tile.y == type["Water"] and tile_copy.y in allowed_tiles:
+			elif tile.y == type["Water"] and tile_copy.y in flood_tiles:
 				tilemap.set_cell(cell, 0 , Vector2i(tile.x+1, type["Water"]))
 			# make water clearer till its back to normal
 			elif tile_copy.y == type["Water"] and tile.x < tile_copy.x:
 				tilemap.set_cell(cell, 0 , Vector2i(tile.x+1, type["Water"]))
 			elif tile_copy.y == type["Deep Water"] and tile.x < tile_copy.x:
 				tilemap.set_cell(cell, 0 , Vector2i(tile.x+1, type["Deep Water"]))
+	
 	# Rises and lowers the tide
 	if rise:
 		tide_height+=1
@@ -142,28 +182,100 @@ func _on_tide_timer_timeout() -> void:
 ## it returns e.g. (0,0) or (3,1) which are the tiles on the *Atlas*
 func _on_player_moving() -> void:
 	var next_tilemap_position = to_coords(player.next_pos)
-	## Check if next move is allowed based on tile's Y-coord on atlas tilemap
-	if tilemap.get_cell_atlas_coords(next_tilemap_position).y in obstacle_tiles:
+	var tile_stood = tilemap_above.get_cell_atlas_coords(next_tilemap_position)
+	
+	# Check if next move is allowed based on tile's Y-coord on atlas tilemap
+	if tilemap_above.get_cell_atlas_coords(next_tilemap_position).y in obstacle_tiles:
 		player.valid_move = false
 	#elif player.next_pos == $Block.position:
 	#player.valid_move = true
 	else:
 		player.valid_move = true
-	pass
+	
+	# Check if next move is falling tile
+	if tile_stood.y in stand_tiles:
+		if tile_stood not in falling_cells:
+			falling_cells.append(next_tilemap_position)
 
 ## Moves the camera depending on players direction
 ##
-func move_camera():
-	camera.position.x = camera_origin.x + camera_vector.x * TILE_SIZE * CAM_X_OFFSET
-	camera.position.y = camera_origin.y + camera_vector.y * TILE_SIZE * CAM_Y_OFFSET
+func move_camera():	
+	camera.position.x = camera_origin.x + camera_vector.x * TILE_SIZE * cam_x_offset
+	camera.position.y = camera_origin.y + camera_vector.y * TILE_SIZE * cam_y_offset
 	# Gives small to avoid area moving bug
 	area_camera.set_deferred("monitoring",false)
 	await get_tree().create_timer(.1).timeout
 	area_camera.set_deferred("monitoring",true)
 
+## Keeps track of where the camera should go
+##
 func _on_area_camera_area_exited(area: Area2D) -> void:
 	if area.is_in_group("player"):
-		print(area.direction)
 		camera_vector.x += area.direction.x
 		camera_vector.y += area.direction.y
 		move_camera()
+
+##
+##
+func _on_fall_timer_timeout() -> void:
+	# Cycle through whole tilemap
+	if falling_cells:
+		for cell in falling_cells:
+			var tile = tilemap_above.get_cell_atlas_coords(cell)
+			if tile.x > 0:
+				tilemap_above.set_cell(cell, 0 , Vector2i(tile.x-1, tile.y))
+			elif tile.x < 0:
+				tilemap_above.set_cell(cell, 0 , Vector2i(tile.x+1, tile.y))
+			else:
+				tilemap_above.set_cell(cell, -1 , Vector2i(-1,-1))
+				falling_cells.erase(cell)
+				await get_tree().create_timer(randi_range(1,3)).timeout
+				rising_cells.append(cell)
+	
+	if rising_cells:
+		for cell in rising_cells:
+			var tile = tilemap_above.get_cell_atlas_coords(cell)
+			var tile_copy = tilemap_above_copy.get_cell_atlas_coords(cell)
+
+			if tile.x < tile_copy.x and tile.x < max_tide:
+				tilemap_above.set_cell(cell, 0 , Vector2i(tile.x+1, tile_copy.y))
+			else:
+				rising_cells.erase(cell)
+
+##
+##
+##
+func _ready() -> void:
+	# Initialize variables
+	camera_origin = camera.position
+	
+	# Assigns the N° of tiles that fit in the screen
+	cam_x_offset = ProjectSettings.get_setting("display/window/size/viewport_width") / TILE_SIZE
+	cam_y_offset = ProjectSettings.get_setting("display/window/size/viewport_height") / TILE_SIZE
+	camera_vector_range(Vector2(to_coords(player.position)))
+	move_camera()
+	
+	# Create copy tilemap to keep track of original values
+	tilemap_copy = TileMapLayer.new()
+	tilemap_copy.set_tile_map_data_from_array(tilemap.get_tile_map_data_as_array())
+	tilemap_above_copy = TileMapLayer.new()
+	tilemap_above_copy.set_tile_map_data_from_array(tilemap_above.get_tile_map_data_as_array())
+	
+	# Determines n° of times the water rises
+	# based on max n° of tiles in the X-axis on the atlas
+	# (every row should have the same amount!)
+	max_tide = 0
+	
+	var used_cells = tilemap.get_used_cells()
+	for cell in used_cells:
+		var tile = tilemap.get_cell_atlas_coords(cell)
+		if tile.x > max_tide:
+			max_tide = tile.x
+	
+	# Places the checkpoints in the map
+	for coord in checkpoint_coords:
+		var new_checkpoint = checkpoint_scene.instantiate()
+		new_checkpoint.last_visited.connect(last_checkpoint)
+		new_checkpoint.global_position = (coord + OFFSET) * TILE_SIZE
+		checkpoint_container.add_child(new_checkpoint)
+		checkpoints.append(new_checkpoint)
