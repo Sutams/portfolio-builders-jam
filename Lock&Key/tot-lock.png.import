@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://datv4ni20r2kl"
-path="res://.godot/imported/tilemap.svg-1101ebc4941fb8ee1f7495f4355e7657.ctex"
+uid="uid://mtbx7wb8g13x"
+path="res://.godot/imported/tot-lock.png-de43b4a63301da7f416a3fda5e72520a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Level/tilemap.svg"
-dest_files=["res://.godot/imported/tilemap.svg-1101ebc4941fb8ee1f7495f4355e7657.ctex"]
+source_file="res://Lock&Key/tot-lock.png"
+dest_files=["res://.godot/imported/tot-lock.png-de43b4a63301da7f416a3fda5e72520a.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

@@ -2,6 +2,7 @@ extends Node2D
 
 # Scenes to instantiate
 @export var checkpoint_scene : PackedScene
+@export var key_scene : PackedScene
 
 # Nodes to work with
 @onready var tilemap = $Ground
@@ -12,6 +13,7 @@ extends Node2D
 @onready var camera = $Camera2D
 @onready var area_camera = $Camera2D/AreaCamera
 @onready var checkpoint_container = $Checkpoints
+@onready var key_container = $Keys
 
 # Constant variables
 const TILE_SIZE = 16 # Square tiles of 16px size
@@ -41,16 +43,20 @@ const type = { "Deep Water" : 0, # <- Y-coord on tilemap atlas
 				"Lilypad" : 8,
 				"Barrel" : 9,
 				"Rock" : 10,
+				"Lock" : 11,
 			}
 # List of tiles the player can move on
 var water_tiles = [type["Deep Water"], type["Water"]]
 var flood_tiles = [type["Grass"], type["Sand"]]
-var obstacle_tiles = [type["Rock"]]
+var obstacle_tiles = [type["Rock"], type["Lock"]]
 var stand_tiles = [type["Lilypad"], type["Barrel"]]
 
 # List to keep tiles that have been stood on
 var falling_cells = []
 var rising_cells = []
+
+# Key spawn coords
+var key_coords = [Vector2(-6,1), Vector2(26,15), Vector2(-7,15)]
 
 # Checkpoints spawn coords
 var checkpoint_coords = [Vector2(1,1), Vector2(17,18), Vector2(53,16), Vector2(36,-9), Vector2(16,-21), Vector2(-35,-21), Vector2(-19,24)]
@@ -58,18 +64,26 @@ var checkpoints = []
 var last_visited_checkpoint
 
 ## Converts a position into tilemap coordinates
-##
 func to_coords(pos: Vector2) -> Vector2i:
 	return Vector2i((pos / TILE_SIZE) - OFFSET)
 
-##
-##
+## Saves the position of the last checkpoint passed over
+## and changes other checkpoints as inactive (for respawning)
 func last_checkpoint(pos : Vector2):
 	for i in len(checkpoints):
 		if Vector2(to_coords(pos)) == checkpoint_coords[i]:
 			last_visited_checkpoint = checkpoints[i]
 		else:
 			checkpoints[i].active = false
+
+## Removes the key from the scene and list
+## and adds it to the player
+func add_key(pos : Vector2):
+	for i in len(key_coords):
+		if Vector2(to_coords(pos)) == key_coords[i]:
+			key_coords.pop_at(i)
+			player.add_key()
+			return
 
 ##
 ##
@@ -105,34 +119,10 @@ func respawn():
 		camera_vector.y = 0
 	move_camera()
 	# gives enough time for the camera to reset without input changing the direction
-	await get_tree().create_timer(1).timeout
+	await get_tree().create_timer(0.5).timeout
 	player.respawning = false
 
-##
-##
-func _process(delta: float) -> void:
-	var player_pos = to_coords(player.position)
-	
-	# Check if there are blocks in water
-	if tilemap.get_cell_atlas_coords(to_coords($Block.position)).y in water_tiles:
-		$Block.in_water = true
-	else: 
-		$Block.in_water = false
-	# Check if player standing on blocks
-	if player.position == $Block.position:
-		time_in_water = 0
-	
-	# Increase timer
-	if tilemap.get_cell_atlas_coords(player_pos).y in water_tiles:
-		time_in_water += delta
-		if tilemap_above.get_cell_atlas_coords(player_pos).y in stand_tiles:
-			time_in_water = 0
-	else:
-		time_in_water = 0
 
-	# Respawn player in water after too long
-	if time_in_water >= MAX_WATER_TIME:
-		respawn()
 
 ## Manages the rise and lowering of the tides by changing the tilemap
 ##
@@ -187,6 +177,11 @@ func _on_player_moving() -> void:
 	# Check if next move is allowed based on tile's Y-coord on atlas tilemap
 	if tilemap_above.get_cell_atlas_coords(next_tilemap_position).y in obstacle_tiles:
 		player.valid_move = false
+		if tilemap_above.get_cell_atlas_coords(next_tilemap_position).y == type["Lock"]:
+			if player.keys > 0:
+				player.valid_move = true
+				player.key_used()
+				tilemap_above.set_cell(next_tilemap_position, -1 , Vector2i(-1,-1))
 	#elif player.next_pos == $Block.position:
 	#player.valid_move = true
 	else:
@@ -274,8 +269,44 @@ func _ready() -> void:
 	
 	# Places the checkpoints in the map
 	for coord in checkpoint_coords:
-		var new_checkpoint = checkpoint_scene.instantiate()
-		new_checkpoint.last_visited.connect(last_checkpoint)
-		new_checkpoint.global_position = (coord + OFFSET) * TILE_SIZE
-		checkpoint_container.add_child(new_checkpoint)
-		checkpoints.append(new_checkpoint)
+		var new_node = checkpoint_scene.instantiate()
+		new_node.last_visited.connect(last_checkpoint)
+		new_node.global_position = (coord + OFFSET) * TILE_SIZE
+		checkpoint_container.add_child(new_node)
+		checkpoints.append(new_node)
+		
+	for coord in key_coords:
+		var new_node = key_scene.instantiate()
+		new_node.add.connect(add_key)
+		new_node.global_position = (coord + OFFSET) * TILE_SIZE
+		key_container.add_child(new_node)
+
+##
+##
+func _process(delta: float) -> void:
+	var player_pos = to_coords(player.position)
+	var reset = Input.is_action_just_pressed("reset")
+	
+	if reset:
+		respawn()
+	
+	# Check if there are blocks in water
+	if tilemap.get_cell_atlas_coords(to_coords($Block.position)).y in water_tiles:
+		$Block.in_water = true
+	else: 
+		$Block.in_water = false
+	# Check if player standing on blocks
+	if player.position == $Block.position:
+		time_in_water = 0
+	
+	# Increase timer
+	if tilemap.get_cell_atlas_coords(player_pos).y in water_tiles:
+		time_in_water += delta
+		if tilemap_above.get_cell_atlas_coords(player_pos).y in stand_tiles:
+			time_in_water = 0
+	else:
+		time_in_water = 0
+
+	# Respawn player in water after too long
+	if time_in_water >= MAX_WATER_TIME:
+		respawn()

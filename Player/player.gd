@@ -1,19 +1,14 @@
 extends Area2D
 
 const STEP = 16
-var can_swim : bool = true
-var respawning : bool
 
-signal moving
-var valid_move = false
-var next_pos : Vector2
+@export var keys = 0
+var can_swim = true
+var respawning = false
 var direction : Vector2
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	respawning = false
-	pass # Replace with function body.
-
+var next_pos : Vector2
+var valid_move = false
+signal moving
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
@@ -39,3 +34,9 @@ func _process(_delta: float) -> void:
 			position.y += move_y * STEP
 	valid_move = false
 	pass
+
+func add_key():
+	keys += 1
+
+func key_used():
+	keys -= 1

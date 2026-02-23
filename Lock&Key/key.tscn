@@ -1,0 +1,75 @@
+[gd_scene format=4 uid="uid://b7dmayj4k8kb0"]
+
+[ext_resource type="Script" uid="uid://dmp2k70jar036" path="res://Lock&Key/key.gd" id="1_5xaei"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0b4ue"]
+size = Vector2(14, 14)
+
+[sub_resource type="PortableCompressedTexture2D" id="PortableCompressedTexture2D_5xaei"]
+_data = PackedByteArray("AAADAAUAAAABAAAAIAAAACAAAAByAAAAUklGRmoAAABXRUJQVlA4TF4AAAAvH8AHEBcgFkzmT9cZmoAk8f/mAoFAktT+SiPMf8C3Bja17bZ5Tk94iIdIpAIQDo0ezTm97RH9nwDuL7d06QMlaLJMlz64RDRZRgcukc2OPyy3dOnDRrJs5RLZ7Hg4")
+size_override = Vector2(32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m28y6"]
+atlas = SubResource("PortableCompressedTexture2D_5xaei")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n3pjy"]
+atlas = SubResource("PortableCompressedTexture2D_5xaei")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4gy6r"]
+atlas = SubResource("PortableCompressedTexture2D_5xaei")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_p4lpv"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m28y6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n3pjy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4gy6r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n3pjy")
+}],
+"loop": true,
+"name": &"Idle",
+"speed": 2.0
+}]
+
+[node name="Key" type="Area2D" unique_id=2090551216 groups=["key"]]
+script = ExtResource("1_5xaei")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=816018677]
+shape = SubResource("RectangleShape2D_0b4ue")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1383391999]
+texture_filter = 1
+scale = Vector2(0.99999994, 0.99999994)
+sprite_frames = SubResource("SpriteFrames_p4lpv")
+animation = &"Idle"
+frame_progress = 0.5785913
+metadata/_aseprite_wizard_interface_config_ = {
+"pending_changes": {}
+}
+metadata/_aseprite_wizard_config_ = {
+"embed_tex": true,
+"layers": [],
+"o_ex_p": "",
+"o_folder": "",
+"o_name": "",
+"only_visible": false,
+"scale": "1.0",
+"should_round_fps": true,
+"slice": "",
+"source": "res://Lock&Key/tot-key.aseprite",
+"source_uid": 3843554830837918434
+}
+metadata/_aseprite_wizard_source_file_hash_ = "3a17e8f0fd1b5d554fb175c636fcda04"
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
