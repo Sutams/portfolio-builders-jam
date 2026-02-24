@@ -5,63 +5,71 @@ extends Node2D
 @export var key_scene : PackedScene
 
 # Nodes to work with
-@onready var tilemap = $Ground
-@onready var tilemap_above = $AboveWater
-@onready var tide_timer = $TideTimer
-@onready var fall_timer = $FallTimer
-@onready var player = $Player
-@onready var camera = $Camera2D
-@onready var area_camera = $Camera2D/AreaCamera
-@onready var checkpoint_container = $Checkpoints
-@onready var key_container = $Keys
+@onready var tilemap : TileMapLayer = $Ground
+@onready var tilemap_above : TileMapLayer = $AboveWater
+@onready var tide_timer : Timer = $TideTimer
+@onready var fall_timer : Timer = $FallTimer
+@onready var player : Area2D = $Player
+@onready var camera : Camera2D = $Camera2D
+@onready var area_camera : Area2D = $Camera2D/AreaCamera
+@onready var checkpoint_container : Node = $Checkpoints
+@onready var key_container : Node = $Keys
 
 # Constant variables
-const TILE_SIZE = 16 # Square tiles of 16px size
-const OFFSET = Vector2(.5,.5)
-const MAX_WATER_TIME = 0.2
+const TILE_SIZE : int = 16 # Square tiles of 16px size
+const OFFSET : Vector2 = Vector2(.5,.5)
+const MAX_WATER_TIME : float = 0.2
 
 ## Rest of variables
 var cam_x_offset : int 
 var cam_y_offset : int
 var camera_origin : Vector2
-var camera_vector = Vector2.ZERO
-var time_in_water = 0.0
-var rise = true
-var tide_height = 0
+var camera_vector : Vector2 = Vector2.ZERO
+var spawnpoint : Vector2 = Vector2(1,1)
+var time_in_water : float = 0.0
+var rise : bool = true
+var tide_height : int = 0
 var max_tide : int
 # Tilemap related
 var tilemap_copy : TileMapLayer
 var tilemap_above_copy : TileMapLayer
-const type = { "Deep Water" : 0, # <- Y-coord on tilemap atlas
-				"Water" : 1,
-				"Grass" : 2,
-				"Sand" : 3,
-				"Wood" : 4,
-				"Wall" : 5,
-				"TBD" : 6,
-				"Lava" : 7,
-				"Lilypad" : 8,
-				"Barrel" : 9,
-				"Rock" : 10,
-				"Lock" : 11,
-			}
+const type : Dictionary = { 
+	"Deep Water" : 0, # <- Y-coord on tilemap atlas
+	"Water" : 1,
+	"Grass" : 2,
+	"Sand" : 3,
+	"Wood" : 4,
+	"Wall" : 5,
+	"TBD" : 6,
+	"Lava" : 7,
+	"Lilypad" : 8,
+	"Barrel" : 9,
+	"Rock" : 10,
+	"Lock" : 11,
+	}
 # List of tiles the player can move on
-var water_tiles = [type["Deep Water"], type["Water"]]
-var flood_tiles = [type["Grass"], type["Sand"]]
-var obstacle_tiles = [type["Rock"], type["Lock"]]
-var stand_tiles = [type["Lilypad"], type["Barrel"]]
+var water_tiles : Array = [type["Deep Water"], type["Water"]]
+var flood_tiles : Array = [type["Grass"], type["Sand"]]
+var obstacle_tiles : Array = [type["Rock"], type["Lock"]]
+var stand_tiles : Array = [type["Lilypad"], type["Barrel"]]
 
 # List to keep tiles that have been stood on
-var falling_cells = []
-var rising_cells = []
+var falling_cells : Array = []
+var rising_cells : Array = []
 
 # Key spawn coords
-var key_coords = [Vector2(-6,1), Vector2(26,15), Vector2(-7,15)]
+var key_coords : Array = [
+	Vector2(-6,1), Vector2(26,15), Vector2(-7,15)
+	]
 
 # Checkpoints spawn coords
-var checkpoint_coords = [Vector2(1,1), Vector2(17,18), Vector2(53,16), Vector2(36,-9), Vector2(16,-21), Vector2(-35,-21), Vector2(-19,24)]
-var checkpoints = []
-var last_visited_checkpoint
+var checkpoint_coords : Array = [
+	Vector2(1,1), Vector2(17,18), Vector2(53,16), 
+	Vector2(36,-9), Vector2(16,-21), Vector2(-35,-21), 
+	Vector2(-19,24)
+	]
+var checkpoints : Array = []
+var last_visited_checkpoint : Area2D
 
 ## Converts a position into tilemap coordinates
 func to_coords(pos: Vector2) -> Vector2i:
@@ -76,8 +84,7 @@ func last_checkpoint(pos : Vector2):
 		else:
 			checkpoints[i].active = false
 
-## Removes the key from the scene and list
-## and adds it to the player
+## Removes the key from the scene and list and adds it to the player
 func add_key(pos : Vector2):
 	for i in len(key_coords):
 		if Vector2(to_coords(pos)) == key_coords[i]:
@@ -85,47 +92,41 @@ func add_key(pos : Vector2):
 			player.add_key()
 			return
 
-##
-##
-func camera_vector_range(vec : Vector2):
-	var range_x = int(vec.x / cam_x_offset)
-	var range_y = int(vec.y / cam_y_offset)
-
-	if vec.x < 0:
+## Calculates camera vector based on how many times 
+## the current position fits in the camera offsets
+func camera_vector_range(pos : Vector2):
+	# How many times does it have to move in the X and Y axis
+	var range_x = int(pos.x / cam_x_offset)
+	var range_y = int(pos.y / cam_y_offset)
+	# Because there is no -0, the value must be lowered once more if its negative
+	if pos.x < 0:
 		range_x -= 1
-	if vec.y < 0:
+	if pos.y < 0:
 		range_y -= 1
 	camera_vector.x = range_x
 	camera_vector.y = range_y
 
-## 
-##
+## Changes the player position and moves the camera accordingly
 func respawn():
 	player.respawning = true
-	# Get last visited checkpoint
-	for checkpoint in checkpoints:
-		if checkpoint.active:
-			last_visited_checkpoint = checkpoint
+	# Sets player position to the last checkpoint or the spawn point
 	if last_visited_checkpoint:
 		player.position = last_visited_checkpoint.position
 	else:
-		player.position = (Vector2(1,1) + OFFSET) * TILE_SIZE
-
-	# Values between 23x and 13x have to give x y coords for camera
+		player.position = (spawnpoint + OFFSET) * TILE_SIZE
+	# Changes the camera vector to correspondent checkpoint or spawn
 	if last_visited_checkpoint: 
 		camera_vector_range(Vector2(to_coords(last_visited_checkpoint.position)))
 	else:
 		camera_vector.x = 0
 		camera_vector.y = 0
 	move_camera()
-	# gives enough time for the camera to reset without input changing the direction
+	# Gives enough time for the camera to reset without 
+	# player input changing the direction
 	await get_tree().create_timer(0.5).timeout
 	player.respawning = false
 
-
-
 ## Manages the rise and lowering of the tides by changing the tilemap
-##
 func _on_tide_timer_timeout() -> void:
 	var used_cells = tilemap.get_used_cells()
 	# Cycle through whole tilemap
@@ -133,27 +134,26 @@ func _on_tide_timer_timeout() -> void:
 		var tile = tilemap.get_cell_atlas_coords(cell)
 		var tile_copy = tilemap_copy.get_cell_atlas_coords(cell)
 		if rise:
-			# slowly turn into water
+			# Turns into water the tiles that can be flood
 			if tile.x == tide_height and tile.y in flood_tiles:
 				tilemap.set_cell(cell, 0 , Vector2i(max_tide, type["Water"]))
-			# if already water, change its color to deeper water
+			# If it's already water, change its color to deeper water
 			elif tile.x > 0 and tile.y == type["Water"]:
 				tilemap.set_cell(cell, 0 , Vector2i(tile.x-1, type["Water"]))
 			elif tile.x > 0 and tile.y == type["Deep Water"]:
 				tilemap.set_cell(cell, 0 , Vector2i(tile.x-1, type["Deep Water"]))
 		else:
-			# slowly go back to normal
+			# Tiles go back to normal using the original values in the copied tilemap
 			if tile_copy.x == tide_height-1 and tile_copy.y in flood_tiles:
 				tilemap.set_cell(cell, 0 , tile_copy)
-			# if next time the tile is gonna be back to normal then change the water color
+			# Changes the water color if the tile is gonna be back to normal next time 
 			elif tile.y == type["Water"] and tile_copy.y in flood_tiles:
 				tilemap.set_cell(cell, 0 , Vector2i(tile.x+1, type["Water"]))
-			# make water clearer till its back to normal
+			# Make the water tiles clearer till its back to normal
 			elif tile_copy.y == type["Water"] and tile.x < tile_copy.x:
 				tilemap.set_cell(cell, 0 , Vector2i(tile.x+1, type["Water"]))
 			elif tile_copy.y == type["Deep Water"] and tile.x < tile_copy.x:
 				tilemap.set_cell(cell, 0 , Vector2i(tile.x+1, type["Deep Water"]))
-	
 	# Rises and lowers the tide
 	if rise:
 		tide_height+=1
@@ -161,29 +161,26 @@ func _on_tide_timer_timeout() -> void:
 		tide_height-=1
 	if tide_height == 0 or tide_height == max_tide:
 		rise = !rise
-		
-		# Stop tide movement for a short time
-		tide_timer.paused = true
-		await get_tree().create_timer(randi_range(1,5)).timeout
-		tide_timer.paused = false
+	# Stops tide movement for a short random time
+	tide_timer.paused = true
+	await get_tree().create_timer(randi_range(1,5)).timeout
+	tide_timer.paused = false
 
-## I can check the "type" of tile in the tilemap with the function
-## tilemap.get_cell_atlas_coords(Vector2i(x,y))
-## it returns e.g. (0,0) or (3,1) which are the tiles on the *Atlas*
+## Allows player to move by checking the "type" of tile in the tilemap
 func _on_player_moving() -> void:
 	var next_tilemap_position = to_coords(player.next_pos)
 	var tile_stood = tilemap_above.get_cell_atlas_coords(next_tilemap_position)
-	
 	# Check if next move is allowed based on tile's Y-coord on atlas tilemap
 	if tilemap_above.get_cell_atlas_coords(next_tilemap_position).y in obstacle_tiles:
 		player.valid_move = false
+		# Opens lock
 		if tilemap_above.get_cell_atlas_coords(next_tilemap_position).y == type["Lock"]:
 			if player.keys > 0:
 				player.valid_move = true
 				player.key_used()
 				tilemap_above.set_cell(next_tilemap_position, -1 , Vector2i(-1,-1))
 	#elif player.next_pos == $Block.position:
-	#player.valid_move = true
+		#player.valid_move = true
 	else:
 		player.valid_move = true
 	
@@ -291,13 +288,13 @@ func _process(delta: float) -> void:
 		respawn()
 	
 	# Check if there are blocks in water
-	if tilemap.get_cell_atlas_coords(to_coords($Block.position)).y in water_tiles:
-		$Block.in_water = true
-	else: 
-		$Block.in_water = false
-	# Check if player standing on blocks
-	if player.position == $Block.position:
-		time_in_water = 0
+	#if tilemap.get_cell_atlas_coords(to_coords($Block.position)).y in water_tiles:
+		#$Block.in_water = true
+	#else: 
+		#$Block.in_water = false
+	## Check if player standing on blocks
+	#if player.position == $Block.position:
+		#time_in_water = 0
 	
 	# Increase timer
 	if tilemap.get_cell_atlas_coords(player_pos).y in water_tiles:

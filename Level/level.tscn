@@ -4,7 +4,6 @@
 [ext_resource type="PackedScene" uid="uid://bkq7kycdcrqxm" path="res://Player/player.tscn" id="3_0b4ue"]
 [ext_resource type="PackedScene" uid="uid://b7dmayj4k8kb0" path="res://Lock&Key/key.tscn" id="3_nk1il"]
 [ext_resource type="PackedScene" uid="uid://eojqh7r1p2te" path="res://Checkpoint/checkpoint.tscn" id="4_0b4ue"]
-[ext_resource type="PackedScene" uid="uid://cpjglweyyhegc" path="res://Block/block.tscn" id="5_f2txt"]
 [ext_resource type="Texture2D" uid="uid://datv4ni20r2kl" path="res://Level/tilemap.svg" id="6_nk1il"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0b4ue"]
@@ -224,10 +223,6 @@ position = Vector2(40, 24)
 texture_filter = 1
 scale = Vector2(0.99999994, 0.99999994)
 
-[node name="Block" parent="." unique_id=1012717656 instance=ExtResource("5_f2txt")]
-position = Vector2(296, 104)
-metadata/_edit_group_ = true
-
 [node name="Camera2D" type="Camera2D" parent="." unique_id=721818192]
 position = Vector2(184, 104)
 position_smoothing_enabled = true
@@ -250,4 +245,3 @@ shape = SubResource("RectangleShape2D_0b4ue")
 [connection signal="area_exited" from="Camera2D/AreaCamera" to="." method="_on_area_camera_area_exited"]
 
 [editable path="Player"]
-[editable path="Block"]
