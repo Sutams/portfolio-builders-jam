@@ -66,7 +66,7 @@ var key_coords : Array = [
 
 # Checkpoints spawn coords
 var checkpoint_coords : Array = [
-	Vector2(1,1), Vector2(24,11), Vector2(39,-2)
+	Vector2(1,1), Vector2(24,11), Vector2(39,-2), Vector2(43,17), Vector2(14,15),
 	]
 var checkpoints : Array = []
 var last_visited_checkpoint : Area2D
@@ -112,7 +112,6 @@ func add_water_time():
 
 ## Changes the player position and moves the camera accordingly
 func respawn():
-	player.respawning = true
 	# Sets player position to the last checkpoint or the spawn point
 	if last_visited_checkpoint:
 		player.position = last_visited_checkpoint.position
@@ -125,10 +124,6 @@ func respawn():
 		camera_vector.x = 0
 		camera_vector.y = 0
 	move_camera()
-	# Gives enough time for the camera to reset without 
-	# player input changing the direction
-	await get_tree().create_timer(0.5).timeout
-	player.respawning = false
 
 ## Manages the rise and lowering of the tides by changing the tilemap
 func _on_tide_timer_timeout() -> void:
@@ -195,7 +190,7 @@ func _on_player_moving() -> void:
 
 ## Moves the camera depending on players direction
 ##
-func move_camera():	
+func move_camera():
 	camera.position.x = camera_origin.x + camera_vector.x * TILE_SIZE * cam_x_offset
 	camera.position.y = camera_origin.y + camera_vector.y * TILE_SIZE * cam_y_offset
 	# Gives small to avoid area moving bug
@@ -207,10 +202,9 @@ func move_camera():
 ##
 func _on_area_camera_area_exited(area: Area2D) -> void:
 	if area.is_in_group("player"):
-		camera_vector.x += area.direction.x
-		camera_vector.y += area.direction.y
+		camera_vector_range(Vector2(to_coords(area.position)))
 		move_camera()
-
+		print(camera_vector)
 ##
 ##
 func _on_fall_timer_timeout() -> void:
@@ -281,7 +275,6 @@ func _ready() -> void:
 		new_node.global_position = (coord + OFFSET) * TILE_SIZE
 		key_container.add_child(new_node)
 	
-	#flippers.activate.connect(add_water_time)
 ##
 ##
 func _process(delta: float) -> void:
