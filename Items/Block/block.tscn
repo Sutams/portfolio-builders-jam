@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cpjglweyyhegc"]
 
-[ext_resource type="Script" uid="uid://ctdsay2cqmohs" path="res://Block/block.gd" id="1_xfwl5"]
-[ext_resource type="Texture2D" uid="uid://bx1xq00wj6m75" path="res://Block/barrel.svg" id="2_4x3rt"]
+[ext_resource type="Script" uid="uid://ctdsay2cqmohs" path="res://Items/Block/block.gd" id="1_xfwl5"]
+[ext_resource type="Texture2D" uid="uid://bx1xq00wj6m75" path="res://Items/Block/barrel.svg" id="2_4x3rt"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1ainy"]
 size = Vector2(14, 14)

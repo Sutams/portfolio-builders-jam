@@ -1,13 +1,14 @@
 extends Area2D
 
-const STEP = 16
+const TILE_SIZE : int = 16
 
-@export var keys = 0
-var can_swim = true
-var respawning = false
+@export var keys : int = 0
+var can_swim : bool = false
+var can_dive : bool = false
+var respawning : bool = false
 var direction : Vector2
 var next_pos : Vector2
-var valid_move = false
+var valid_move : bool = false
 signal moving
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -16,22 +17,20 @@ func _process(_delta: float) -> void:
 	var move_y = Input.get_axis("up","down")
 	var move = Input.is_action_just_pressed("move")
 	direction = Vector2(move_x, move_y)
-	
 	if respawning:
 		direction = Vector2.ZERO
 		return
-	
 	# Need to check if movement is allowed!
 	# Get the position you'll be in from the map and see if its water 
 	if move:
-		next_pos.x = position.x + move_x * STEP
-		next_pos.y = position.y + move_y * STEP
+		next_pos.x = position.x + move_x * TILE_SIZE
+		next_pos.y = position.y + move_y * TILE_SIZE
 		moving.emit()
 	if valid_move:
 		if move_x:
-			position.x += move_x * STEP
+			position.x += move_x * TILE_SIZE
 		if move_y:
-			position.y += move_y * STEP
+			position.y += move_y * TILE_SIZE
 	valid_move = false
 	pass
 

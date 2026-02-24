@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://coj33jph2ovkq"]
+
+[ext_resource type="Script" uid="uid://dcrw6pmfwl0do" path="res://Items/Flippers/flippers.gd" id="1_mc17a"]
+[ext_resource type="Texture2D" uid="uid://7be2r1jraufv" path="res://Items/Flippers/tot-flippers.png" id="2_4y0xj"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0b4ue"]
+size = Vector2(14, 14)
+
+[node name="Flippers" type="Area2D" unique_id=2090551216]
+script = ExtResource("1_mc17a")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=816018677]
+shape = SubResource("RectangleShape2D_0b4ue")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1179840949]
+scale = Vector2(0.99999994, 0.99999994)
+texture = ExtResource("2_4y0xj")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]

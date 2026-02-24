@@ -2,8 +2,9 @@
 
 [ext_resource type="Script" uid="uid://swrn2d64qvmd" path="res://Level/level.gd" id="1_0b4ue"]
 [ext_resource type="PackedScene" uid="uid://bkq7kycdcrqxm" path="res://Player/player.tscn" id="3_0b4ue"]
-[ext_resource type="PackedScene" uid="uid://b7dmayj4k8kb0" path="res://Lock&Key/key.tscn" id="3_nk1il"]
+[ext_resource type="PackedScene" uid="uid://b7dmayj4k8kb0" path="res://Items/Key/key.tscn" id="3_nk1il"]
 [ext_resource type="PackedScene" uid="uid://eojqh7r1p2te" path="res://Checkpoint/checkpoint.tscn" id="4_0b4ue"]
+[ext_resource type="PackedScene" uid="uid://coj33jph2ovkq" path="res://Items/Flippers/Flippers.tscn" id="6_d6qko"]
 [ext_resource type="Texture2D" uid="uid://datv4ni20r2kl" path="res://Level/tilemap.svg" id="6_nk1il"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0b4ue"]
@@ -194,7 +195,7 @@ sources/0 = SubResource("TileSetAtlasSource_wqlfs")
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0b4ue"]
 size = Vector2(362, 202)
 
-[node name="level" type="Node2D" unique_id=170661356]
+[node name="Level" type="Node2D" unique_id=170661356]
 script = ExtResource("1_0b4ue")
 checkpoint_scene = ExtResource("4_0b4ue")
 key_scene = ExtResource("3_nk1il")
@@ -239,9 +240,13 @@ shape = SubResource("RectangleShape2D_0b4ue")
 
 [node name="Keys" type="Node" parent="." unique_id=1250997834]
 
+[node name="Flippers" parent="." unique_id=2090551216 instance=ExtResource("6_d6qko")]
+position = Vector2(88, 40)
+
 [connection signal="timeout" from="TideTimer" to="." method="_on_tide_timer_timeout"]
 [connection signal="timeout" from="FallTimer" to="." method="_on_fall_timer_timeout"]
 [connection signal="moving" from="Player" to="." method="_on_player_moving"]
 [connection signal="area_exited" from="Camera2D/AreaCamera" to="." method="_on_area_camera_area_exited"]
+[connection signal="activate" from="Flippers" to="." method="add_water_time"]
 
 [editable path="Player"]

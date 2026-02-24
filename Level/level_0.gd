@@ -61,14 +61,12 @@ var rising_cells : Array = []
 
 # Key spawn coords
 var key_coords : Array = [
-	Vector2(-6,1), Vector2(26,15), Vector2(-7,15)
+	Vector2(-6,1),
 	]
 
 # Checkpoints spawn coords
 var checkpoint_coords : Array = [
-	Vector2(1,1), Vector2(17,18), Vector2(53,16), 
-	Vector2(36,-9), Vector2(16,-21), Vector2(-35,-21), 
-	Vector2(-19,24)
+	Vector2(1,1), Vector2(24,11), Vector2(39,-2)
 	]
 var checkpoints : Array = []
 var last_visited_checkpoint : Area2D
@@ -110,7 +108,7 @@ func camera_vector_range(pos : Vector2):
 
 ## Adds time to the max water time 
 func add_water_time():
-	max_water_time += 0.2
+	max_water_time += 0.1
 
 ## Changes the player position and moves the camera accordingly
 func respawn():
@@ -283,7 +281,7 @@ func _ready() -> void:
 		new_node.global_position = (coord + OFFSET) * TILE_SIZE
 		key_container.add_child(new_node)
 	
-	flippers.activate.connect(add_water_time)
+	#flippers.activate.connect(add_water_time)
 ##
 ##
 func _process(delta: float) -> void:

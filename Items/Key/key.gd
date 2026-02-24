@@ -1,7 +1,6 @@
 extends Area2D
 
-@onready var animation = $AnimatedSprite2D
-
+@onready var animation : AnimatedSprite2D = $AnimatedSprite2D
 signal add
 
 func _ready() -> void:

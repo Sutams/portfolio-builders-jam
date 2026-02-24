@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://qdtbo62c7e3y"
-path="res://.godot/imported/tilemap.svg-1101ebc4941fb8ee1f7495f4355e7657.ctex"
+uid="uid://7be2r1jraufv"
+path="res://.godot/imported/tot-flippers.png-05b2db76c7c6e802011bca3cf574bb1f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Level/tilemap.svg"
-dest_files=["res://.godot/imported/tilemap.svg-1101ebc4941fb8ee1f7495f4355e7657.ctex"]
+source_file="res://Items/Flippers/tot-flippers.png"
+dest_files=["res://.godot/imported/tot-flippers.png-05b2db76c7c6e802011bca3cf574bb1f.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false
