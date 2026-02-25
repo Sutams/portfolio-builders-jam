@@ -64,13 +64,15 @@ var rising_cells : Array = []
 
 # Spawn coords
 var key_coords : Array = [
-	Vector2(21,6), Vector2(39,6), Vector2(44,24), Vector2(4,22), Vector2(21,37),
+	Vector2(21,6), Vector2(39,6), Vector2(44,24), Vector2(4,22), 
+	Vector2(21,37), Vector2(48,38), Vector2(44,-18), Vector2(67,-4),
 	]
 var flipper_coords : Array = [
-	Vector2(29,6), Vector2(16,29), 
+	Vector2(29,6), Vector2(16,29), Vector2(65,21), Vector2(13,-22)
 	]
 var checkpoint_coords : Array = [
-	Vector2(39,-2),
+	Vector2(35,-16),
+	Vector2(19,-9), Vector2(39,-2),
 	Vector2(1,1), Vector2(24,11), Vector2(63,8),
 	Vector2(14,15), Vector2(43,17), Vector2(54,23),
 	Vector2(4,36), Vector2(35,32)
@@ -105,11 +107,13 @@ func add_key(pos : Vector2):
 func camera_vector_range(pos : Vector2):
 	# How many times does it have to move in the X and Y axis
 	var range_x = int(pos.x / cam_x_offset)
+	var remainder_x = fmod(pos.x, cam_x_offset)
 	var range_y = int(pos.y / cam_y_offset)
+	var remainder_y = fmod(pos.y, cam_y_offset)
 	# Because there is no -0, the value must be lowered once more if its negative
-	if pos.x < 0:
+	if remainder_x < 0:
 		range_x -= 1
-	if pos.y < 0:
+	if remainder_y < 0:
 		range_y -= 1
 	camera_vector.x = range_x
 	camera_vector.y = range_y
@@ -197,8 +201,11 @@ func _on_player_moving() -> void:
 	
 	# Check if next move is falling tile
 	if tile_stood.y in stand_tiles:
-		if tile_stood not in falling_cells:
-			falling_cells.append(next_tilemap_position)
+		if rising_cells.has(next_tilemap_position):
+			rising_cells.erase(next_tilemap_position)
+		if falling_cells.has(next_tilemap_position):
+			return
+		falling_cells.append(next_tilemap_position)
 
 ## Moves the camera depending on players direction
 ##
@@ -216,7 +223,7 @@ func _on_area_camera_area_exited(area: Area2D) -> void:
 	if area.is_in_group("player"):
 		camera_vector_range(to_coords(area.position))
 		move_camera()
-##
+## Makes determined tiles "fall" when stood on and then "rise" when left
 ##
 func _on_fall_timer_timeout() -> void:
 	# Cycle through whole tilemap
@@ -230,7 +237,7 @@ func _on_fall_timer_timeout() -> void:
 			else:
 				tilemap_above.set_cell(cell, -1 , Vector2i(-1,-1))
 				falling_cells.erase(cell)
-				await get_tree().create_timer(randi_range(1,3)).timeout
+				await get_tree().create_timer(1).timeout
 				rising_cells.append(cell)
 	
 	if rising_cells:
