@@ -184,7 +184,6 @@ script = ExtResource("1_b2gmk")
 checkpoint_scene = ExtResource("2_jt4m3")
 key_scene = ExtResource("3_k8g71")
 flipper_scene = ExtResource("6_udbtf")
-swim_level = 10
 
 [node name="Ground" type="TileMapLayer" parent="." unique_id=1853726450]
 texture_filter = 1
