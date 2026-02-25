@@ -3,6 +3,8 @@ extends Node2D
 # Scenes to instantiate
 @export var checkpoint_scene : PackedScene
 @export var key_scene : PackedScene
+@export var flipper_scene : PackedScene
+@export var swim_level : int = 0
 
 # Nodes to work with
 @onready var tilemap : TileMapLayer = $Ground
@@ -14,7 +16,7 @@ extends Node2D
 @onready var area_camera : Area2D = $Camera2D/AreaCamera
 @onready var checkpoint_container : Node = $Checkpoints
 @onready var key_container : Node = $Keys
-@onready var flippers : Area2D = $Flippers
+@onready var flipper_container : Node = $Flippers
 
 # Constant variables
 const TILE_SIZE : int = 16 # Square tiles of 16px size
@@ -30,6 +32,7 @@ var time_in_water : float = 0.0
 var rise : bool = true
 var tide_height : int = 0
 var max_tide : int
+var swim_time : float = 0.1
 var max_water_time : float = 0.2
 
 # Tilemap related
@@ -51,43 +54,48 @@ const type : Dictionary = {
 	}
 # List of tiles the player can move on
 var water_tiles : Array = [type["Deep Water"], type["Water"]]
-var flood_tiles : Array = [type["Grass"], type["Sand"]]
-var obstacle_tiles : Array = [type["Wall"], type["Mountain"], type["Rock"], type["Lock"]]
+var flood_tiles : Array = [type["Grass"], type["Sand"], type["Wood"]]
+var obstacle_tiles : Array = [type["Wall"], type["Rock"], type["Lock"]]
 var stand_tiles : Array = [type["Lilypad"], type["Barrel"]]
 
 # List to keep tiles that have been stood on
 var falling_cells : Array = []
 var rising_cells : Array = []
 
-# Key spawn coords
+# Spawn coords
 var key_coords : Array = [
-	Vector2(-6,1),
+	Vector2(21,6), Vector2(39,6), Vector2(44,24), Vector2(4,22), Vector2(21,37),
 	]
-
-# Checkpoints spawn coords
+var flipper_coords : Array = [
+	Vector2(29,6), Vector2(16,29), 
+	]
 var checkpoint_coords : Array = [
-	Vector2(1,1), Vector2(24,11), Vector2(39,-2), Vector2(43,17), Vector2(14,15),
+	Vector2(39,-2),
+	Vector2(1,1), Vector2(24,11), Vector2(63,8),
+	Vector2(14,15), Vector2(43,17), Vector2(54,23),
+	Vector2(4,36), Vector2(35,32)
 	]
 var checkpoints : Array = []
 var last_visited_checkpoint : Area2D
 
 ## Converts a position into tilemap coordinates
-func to_coords(pos: Vector2) -> Vector2i:
-	return Vector2i((pos / TILE_SIZE) - OFFSET)
+func to_coords(pos: Vector2) -> Vector2:
+	return (pos / TILE_SIZE) - OFFSET
 
 ## Saves the position of the last checkpoint passed over
 ## and changes other checkpoints as inactive (for respawning)
 func last_checkpoint(pos : Vector2):
 	for i in len(checkpoints):
-		if Vector2(to_coords(pos)) == checkpoint_coords[i]:
+		if to_coords(pos) == checkpoint_coords[i]:
 			last_visited_checkpoint = checkpoints[i]
 		else:
 			checkpoints[i].active = false
 
+
 ## Removes the key from the scene and list and adds it to the player
 func add_key(pos : Vector2):
 	for i in len(key_coords):
-		if Vector2(to_coords(pos)) == key_coords[i]:
+		if to_coords(pos) == key_coords[i]:
 			key_coords.pop_at(i)
 			player.add_key()
 			return
@@ -107,8 +115,9 @@ func camera_vector_range(pos : Vector2):
 	camera_vector.y = range_y
 
 ## Adds time to the max water time 
-func add_water_time():
-	max_water_time += 0.1
+func swim_level_up():
+	swim_level += 1
+	max_water_time += swim_time
 
 ## Changes the player position and moves the camera accordingly
 func respawn():
@@ -119,7 +128,7 @@ func respawn():
 		player.position = (spawnpoint + OFFSET) * TILE_SIZE
 	# Changes the camera vector to correspondent checkpoint or spawn
 	if last_visited_checkpoint: 
-		camera_vector_range(Vector2(to_coords(last_visited_checkpoint.position)))
+		camera_vector_range(to_coords(last_visited_checkpoint.position))
 	else:
 		camera_vector.x = 0
 		camera_vector.y = 0
@@ -162,12 +171,15 @@ func _on_tide_timer_timeout() -> void:
 		rise = !rise
 		# Stops tide movement for a short random time
 		tide_timer.paused = true
-		await get_tree().create_timer(randi_range(2,4)).timeout
+		if tide_height == 0:
+			await get_tree().create_timer(randi_range(2,5)).timeout
+		else:
+			await get_tree().create_timer(randi_range(1,4)).timeout
 		tide_timer.paused = false
 
 ## Allows player to move by checking the "type" of tile in the tilemap
 func _on_player_moving() -> void:
-	var next_tilemap_position = to_coords(player.next_pos)
+	var next_tilemap_position = Vector2i(to_coords(player.next_pos))
 	var tile_stood = tilemap_above.get_cell_atlas_coords(next_tilemap_position)
 	# Check if next move is allowed based on tile's Y-coord on atlas tilemap
 	if tilemap_above.get_cell_atlas_coords(next_tilemap_position).y in obstacle_tiles:
@@ -202,9 +214,8 @@ func move_camera():
 ##
 func _on_area_camera_area_exited(area: Area2D) -> void:
 	if area.is_in_group("player"):
-		camera_vector_range(Vector2(to_coords(area.position)))
+		camera_vector_range(to_coords(area.position))
 		move_camera()
-		print(camera_vector)
 ##
 ##
 func _on_fall_timer_timeout() -> void:
@@ -242,7 +253,7 @@ func _ready() -> void:
 	# Assigns the N° of tiles that fit in the screen
 	cam_x_offset = ProjectSettings.get_setting("display/window/size/viewport_width") / TILE_SIZE
 	cam_y_offset = ProjectSettings.get_setting("display/window/size/viewport_height") / TILE_SIZE
-	camera_vector_range(Vector2(to_coords(player.position)))
+	camera_vector_range(to_coords(player.position))
 	move_camera()
 	
 	# Create copy tilemap to keep track of original values
@@ -261,13 +272,14 @@ func _ready() -> void:
 		if tile.x > max_tide:
 			max_tide = tile.x
 	
-	# Places the checkpoints in the map
+	# Places the objects in the map
 	for coord in checkpoint_coords:
 		var new_node = checkpoint_scene.instantiate()
 		new_node.last_visited.connect(last_checkpoint)
 		new_node.global_position = (coord + OFFSET) * TILE_SIZE
 		checkpoint_container.add_child(new_node)
 		checkpoints.append(new_node)
+		new_node.owner = get_tree().edited_scene_root
 		
 	for coord in key_coords:
 		var new_node = key_scene.instantiate()
@@ -275,14 +287,28 @@ func _ready() -> void:
 		new_node.global_position = (coord + OFFSET) * TILE_SIZE
 		key_container.add_child(new_node)
 	
+	for coord in flipper_coords:
+		var new_node = flipper_scene.instantiate()
+		new_node.activate.connect(swim_level_up)
+		new_node.global_position = (coord + OFFSET) * TILE_SIZE
+		flipper_container.add_child(new_node)
+	
+	# For debug purposes
+	max_water_time = max_water_time + swim_time * swim_level
 ##
 ##
 func _process(delta: float) -> void:
 	var player_pos = to_coords(player.position)
 	var reset = Input.is_action_just_pressed("reset")
+	var interact = Input.is_action_just_pressed("interact")
 	
 	if reset:
 		respawn()
+	
+	if interact:
+		if player_pos in checkpoint_coords:
+			#
+			pass
 	
 	# Check if there are blocks in water
 	#if tilemap.get_cell_atlas_coords(to_coords($Block.position)).y in water_tiles:

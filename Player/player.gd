@@ -3,8 +3,8 @@ extends Area2D
 const TILE_SIZE : int = 16
 
 @export var keys : int = 0
-var can_swim : bool = false
-var can_dive : bool = false
+@export var can_dive : bool = false
+@export var can_tp : bool = true
 var next_pos : Vector2
 var valid_move : bool = false
 signal moving
