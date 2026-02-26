@@ -1,0 +1,14 @@
+[remap]
+
+importer="aseprite_wizard.plugin.noop"
+type="PackedDataContainer"
+uid="uid://c41cnge1wjn27"
+path="res://.godot/imported/tot-npc.aseprite-9e883af830da27fad1fe4c0528d1b4a3.res"
+
+[deps]
+
+source_file="res://NPC/tot-npc.aseprite"
+dest_files=["res://.godot/imported/tot-npc.aseprite-9e883af830da27fad1fe4c0528d1b4a3.res"]
+
+[params]
+

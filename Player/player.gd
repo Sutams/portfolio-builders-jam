@@ -5,12 +5,14 @@ const TILE_SIZE : int = 16
 @export var keys : int = 0
 @export var can_dive : bool = false
 @export var can_tp : bool = true
+@onready var animate = $AnimatedSprite2D
 var next_pos : Vector2
 var valid_move : bool = false
+var idle_time : float = 0.0
 signal moving
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	var move_x = Input.get_axis("left","right")
 	var move_y = Input.get_axis("up","down")
 	var move = Input.is_action_just_pressed("move")
@@ -25,8 +27,24 @@ func _process(_delta: float) -> void:
 			position.x += move_x * TILE_SIZE
 		if move_y:
 			position.y += move_y * TILE_SIZE
+	
+	# Manage animations
+	if move:
+		idle_time = 0
+		if move_x > 0:
+			animate.play("WalkRight")
+		elif move_x < 0:
+			animate.play("WalkLeft")
+		if move_y > 0:
+			animate.play("WalkFront")
+		elif move_y < 0:
+			animate.play("WalkBack")
+	else:
+		idle_time +=  delta
+		if idle_time > 0.5:
+			animate.play("Idle")
+			idle_time = 0
 	valid_move = false
-	pass
 
 func add_key():
 	keys += 1

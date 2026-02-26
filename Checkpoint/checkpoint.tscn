@@ -6,40 +6,68 @@
 size = Vector2(14, 14)
 
 [sub_resource type="PortableCompressedTexture2D" id="PortableCompressedTexture2D_fmjbl"]
-_data = PackedByteArray("AAADAAUAAAABAAAAIAAAABAAAABwAAAAUklGRmgAAABXRUJQVlA4TFsAAAAvH8ADEB8gECC0yDRvQ0HaBkx3lMy/xxEIUBRP/P9o/gPw300tsG0byRFx0eH6e1OeN9m3t9lH/huI6L/CtG2Y7PYUZ3anf1uIQjsTO22VxJFOcfG2YUP+6X9BAA==")
-size_override = Vector2(32, 16)
+_data = PackedByteArray("AAADAAUAAAABAAAAMAAAACAAAACyAAAAUklGRqoAAABXRUJQVlA4TJ4AAAAvL8AHEDegKAAZSBZF9FLarv9qKGrbBuqFpPx/xTQcUxOAAGM00f+WSA/zHwD8PxuO3U1wWoFtJNtNnmyMj1WECsDmTuT03wZ6gyeO6L+AoGBAP/DA7jwgTpceKoI7D4izQMXAYYll4EjZwMCRAgqHCt4LvG3HQO0ZqP1e7+P6XhHQGwL8ERCOlDAQYOLCGgHBjAQgaiXA4AjA/wGXBg==")
+size_override = Vector2(48, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_o06rg"]
 atlas = SubResource("PortableCompressedTexture2D_fmjbl")
-region = Rect2(16, 0, 16, 16)
+region = Rect2(0, 16, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xqs53"]
 atlas = SubResource("PortableCompressedTexture2D_fmjbl")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_76yq8"]
+atlas = SubResource("PortableCompressedTexture2D_fmjbl")
+region = Rect2(32, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2e14e"]
+atlas = SubResource("PortableCompressedTexture2D_fmjbl")
 region = Rect2(0, 0, 16, 16)
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_76yq8"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_42fvg"]
+atlas = SubResource("PortableCompressedTexture2D_fmjbl")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fm0q3"]
+atlas = SubResource("PortableCompressedTexture2D_fmjbl")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_660ni"]
 animations = [{
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_o06rg")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_o06rg")
+"texture": SubResource("AtlasTexture_xqs53")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_76yq8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xqs53")
 }],
 "loop": true,
 "name": &"active",
-"speed": 1.0
+"speed": 5.0
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_xqs53")
+"texture": SubResource("AtlasTexture_2e14e")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_xqs53")
+"texture": SubResource("AtlasTexture_42fvg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fm0q3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_42fvg")
 }],
 "loop": true,
 "name": &"inactive",
-"speed": 1.0
+"speed": 5.0
 }]
 
 [node name="Checkpoint" type="Area2D" unique_id=2090551216 groups=["checkpoint"]]
@@ -51,9 +79,11 @@ shape = SubResource("RectangleShape2D_0b4ue")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1383391999]
 texture_filter = 1
+position = Vector2(2, -5)
 scale = Vector2(0.99999994, 0.99999994)
-sprite_frames = SubResource("SpriteFrames_76yq8")
-animation = &"active"
+sprite_frames = SubResource("SpriteFrames_660ni")
+animation = &"inactive"
+frame_progress = 0.45572633
 metadata/_aseprite_wizard_interface_config_ = {
 "pending_changes": {}
 }
@@ -67,9 +97,9 @@ metadata/_aseprite_wizard_config_ = {
 "scale": "1.0",
 "should_round_fps": true,
 "slice": "",
-"source": "res://Checkpoint/tot-checkpoint.aseprite",
+"source": "res://Checkpoint/checkpoint.aseprite",
 "source_uid": -1
 }
-metadata/_aseprite_wizard_source_file_hash_ = "a5fefe9ac7deb943ef355b96ba561a24"
+metadata/_aseprite_wizard_source_file_hash_ = "44fd5999cbbc685c1d1a7350b1d33281"
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]

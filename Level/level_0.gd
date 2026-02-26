@@ -68,13 +68,13 @@ var key_coords : Array = [
 	Vector2(21,37), Vector2(48,38), Vector2(44,-18), Vector2(67,-4),
 	]
 var flipper_coords : Array = [
-	Vector2(29,6), Vector2(16,29), Vector2(65,21), Vector2(13,-22)
+	Vector2(29,6), Vector2(16,29), Vector2(65,21), Vector2(13,-22), Vector2(52,-23)
 	]
 var checkpoint_coords : Array = [
 	Vector2(35,-16),
 	Vector2(19,-9), Vector2(39,-2),
 	Vector2(1,1), Vector2(24,11), Vector2(63,8),
-	Vector2(14,15), Vector2(43,17), Vector2(54,23),
+	Vector2(-2,22),Vector2(14,15), Vector2(43,17), Vector2(54,23),
 	Vector2(4,36), Vector2(35,32)
 	]
 var checkpoints : Array = []
@@ -91,7 +91,7 @@ func last_checkpoint(pos : Vector2):
 		if to_coords(pos) == checkpoint_coords[i]:
 			last_visited_checkpoint = checkpoints[i]
 		else:
-			checkpoints[i].active = false
+			checkpoints[i].deactivate()
 
 
 ## Removes the key from the scene and list and adds it to the player
@@ -184,12 +184,13 @@ func _on_tide_timer_timeout() -> void:
 ## Allows player to move by checking the "type" of tile in the tilemap
 func _on_player_moving() -> void:
 	var next_tilemap_position = Vector2i(to_coords(player.next_pos))
-	var tile_stood = tilemap_above.get_cell_atlas_coords(next_tilemap_position)
+	var tile_stood = tilemap.get_cell_atlas_coords(next_tilemap_position)
+	var tile_above_stood = tilemap_above.get_cell_atlas_coords(next_tilemap_position)
 	# Check if next move is allowed based on tile's Y-coord on atlas tilemap
-	if tilemap_above.get_cell_atlas_coords(next_tilemap_position).y in obstacle_tiles:
+	if tile_above_stood.y in obstacle_tiles or tile_stood.y in obstacle_tiles:
 		player.valid_move = false
 		# Opens lock
-		if tilemap_above.get_cell_atlas_coords(next_tilemap_position).y == type["Lock"]:
+		if tile_above_stood.y == type["Lock"]:
 			if player.keys > 0:
 				player.valid_move = true
 				player.key_used()
@@ -200,7 +201,7 @@ func _on_player_moving() -> void:
 		player.valid_move = true
 	
 	# Check if next move is falling tile
-	if tile_stood.y in stand_tiles:
+	if tile_above_stood.y in stand_tiles:
 		if rising_cells.has(next_tilemap_position):
 			rising_cells.erase(next_tilemap_position)
 		if falling_cells.has(next_tilemap_position):
