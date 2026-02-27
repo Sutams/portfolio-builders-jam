@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://coj33jph2ovkq"]
 
 [ext_resource type="Script" uid="uid://dcrw6pmfwl0do" path="res://Items/Flippers/flippers.gd" id="1_mc17a"]
-[ext_resource type="Texture2D" uid="uid://7be2r1jraufv" path="res://Items/Flippers/tot-flippers.png" id="2_4y0xj"]
+[ext_resource type="Texture2D" uid="uid://c5faln3umogs5" path="res://Items/Flippers/tot-flippers.png" id="2_4y0xj"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0b4ue"]
 size = Vector2(14, 14)

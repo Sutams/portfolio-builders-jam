@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c5faln3umogs5"
-path="res://.godot/imported/tot-flippers.png-05b2db76c7c6e802011bca3cf574bb1f.ctex"
+uid="uid://t3bkw1hv58d7"
+path="res://.godot/imported/tot-pickaxe.png-20aeb4821d4032b525cd1c4ae1fe9c7d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Items/Flippers/tot-flippers.png"
-dest_files=["res://.godot/imported/tot-flippers.png-05b2db76c7c6e802011bca3cf574bb1f.ctex"]
+source_file="res://Items/Pickaxe/tot-pickaxe.png"
+dest_files=["res://.godot/imported/tot-pickaxe.png-20aeb4821d4032b525cd1c4ae1fe9c7d.ctex"]
 
 [params]
 
