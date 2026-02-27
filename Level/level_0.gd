@@ -73,7 +73,7 @@ var flipper_coords : Array = [
 var checkpoint_coords : Array = [
 	Vector2(35,-16),
 	Vector2(19,-9), Vector2(39,-2),
-	Vector2(1,1), Vector2(24,11), Vector2(63,8),
+	Vector2(-7,7), Vector2(1,1), Vector2(24,11), Vector2(63,8),
 	Vector2(-2,22),Vector2(14,15), Vector2(43,17), Vector2(54,23),
 	Vector2(4,36), Vector2(35,32)
 	]
