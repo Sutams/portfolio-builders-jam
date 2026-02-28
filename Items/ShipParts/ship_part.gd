@@ -1,26 +1,27 @@
 extends Area2D
 
-@export var ship_part : int
 @export var lang : int
 @onready var sprite : Sprite2D = $Sprite2D
 signal collect
+var item_name
+var dict = {
+	"Compass" : 0,
+	"SandGlass" : 1,
+	"Sextant" : 2
+}
 
-var ship_part_path : Array = [  
+var path : Array = [  
 	"res://Items/ShipParts/tot-compass.png",
 	"res://Items/ShipParts/tot-sandglass.png",
 	"res://Items/ShipParts/tot-sextant.png"]
-	
-var ship_part_name : Array = [("Compass"),("SandGlass"),("Sextant")] # EN
-	#[("Brújula"),("Reloj de Arena"),("Sextante")], # ES
-var dialogue = "You grabbed "
 
-func create(i : int):
-	ship_part = i
+func create(part_name : String):
+	item_name = part_name
 
 func _ready() -> void:
-	sprite.texture = load(ship_part_path[ship_part])
+	sprite.texture = load(path[dict[item_name]])
 
 func _on_area_entered(area: Area2D) -> void:
 	if area.is_in_group("player"):
-		collect.emit(global_position, ship_part_name[ship_part])
+		collect.emit(global_position, item_name)
 		queue_free()

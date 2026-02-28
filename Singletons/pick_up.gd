@@ -29,7 +29,6 @@ func _process(delta: float) -> void:
 	else:
 		label.self_modulate = Color(0,0,0,0)
 
-
 func show_text(pos : Vector2, txt : String):
 	fade_in = true
 	global_position = pos

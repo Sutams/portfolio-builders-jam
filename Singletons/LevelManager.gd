@@ -22,18 +22,24 @@ var npc_coords : Array = [
 	Vector2(0,22),Vector2(70,9),Vector2(37,17),Vector2(55,42),
 	Vector2(51,29),Vector2(53,7),Vector2(25,-15),Vector2(59,22)
 	]
-var ship_part_coords : Array = [
-	Vector2(-16,34), Vector2(-11,-22), Vector2(74,14)
-	]
+#var ship_part_coords : Array = [
+	#Vector2(-16,34), Vector2(-11,-22), Vector2(74,14)
+	#]
+
+var ship_part_coords = {
+	"Compass" : Vector2(-16,34),
+	"SandGlass" : Vector2(-11,-22),
+	"Sextant" : Vector2(74,14)
+}
 
 var ship_parts_retrieved : Array = []
-var npc_rescued : int = 0
-var flippers_collected : int = 0
-var keys_collected : int = 0
-var loot_collected : int = 0
+var npc_rescued : Array = []
+var flippers_collected : Array = []
+var loot_collected : Array = []
+var keys_collected : Array = []
 var pickaxe_collected : int = 0
-
-
+var player_keys : int = 0
+var last_checkpoint : Area2D
 
 func check_win():
 	var all_ship_part_retrieved : bool
@@ -41,9 +47,18 @@ func check_win():
 	if LevelManager.ship_parts_retrieved.size() == LevelManager.ship_part_coords.size():
 		all_ship_part_retrieved = true
 		
-	if LevelManager.npc_rescued == LevelManager.npc_coords.size():
+	if LevelManager.npc_rescued.size() == LevelManager.npc_coords.size():
 		all_npc_rescued = true
 	
 	if all_ship_part_retrieved and all_npc_rescued:
 		pass
 		#win
+
+func new_game():
+	ship_parts_retrieved = []
+	npc_rescued = []
+	flippers_collected = []
+	pickaxe_collected = 0
+	loot_collected = []
+	keys_collected = []
+	player_keys = 0

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dxe6wgxumewuk"]
 
-[ext_resource type="Script" uid="uid://keewhlxg0mhr" path="res://UI/PickUp/pick_up.gd" id="1_a2443"]
+[ext_resource type="Script" uid="uid://keewhlxg0mhr" path="res://Singletons/pick_up.gd" id="1_a2443"]
 
 [node name="TextBox" type="Control" unique_id=158811637]
 z_index = 5

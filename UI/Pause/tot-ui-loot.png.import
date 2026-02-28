@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d1yvqwhf10oxv"
-path="res://.godot/imported/tot-ui-flippers.png-dbd2268d429f017cddbfd853b56a8eea.ctex"
+uid="uid://bko0xykgaa1bo"
+path="res://.godot/imported/tot-ui-loot.png-dca6ce69821eaac91da50adb13f40934.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://UI/tot-ui-flippers.png"
-dest_files=["res://.godot/imported/tot-ui-flippers.png-dbd2268d429f017cddbfd853b56a8eea.ctex"]
+source_file="res://UI/Pause/tot-ui-loot.png"
+dest_files=["res://.godot/imported/tot-ui-loot.png-dca6ce69821eaac91da50adb13f40934.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bt5asnsw1egy5"
-path="res://.godot/imported/tot-ui-ship2.png-93c54b38683c93891f9e22f1be4b56a0.ctex"
+uid="uid://dc65kv76p1tal"
+path="res://.godot/imported/tot-ui-pickaxe.png-efc3219580634c9acf3d27d96ed4570a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://UI/tot-ui-ship2.png"
-dest_files=["res://.godot/imported/tot-ui-ship2.png-93c54b38683c93891f9e22f1be4b56a0.ctex"]
+source_file="res://UI/Pause/tot-ui-pickaxe.png"
+dest_files=["res://.godot/imported/tot-ui-pickaxe.png-efc3219580634c9acf3d27d96ed4570a.ctex"]
 
 [params]
 

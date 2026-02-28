@@ -1,21 +1,45 @@
 [gd_scene format=3 uid="uid://dw7wy1rtb8tb"]
 
 [ext_resource type="FontFile" uid="uid://bwp7cpjdjx15i" path="res://UI/Font/m3x6.ttf" id="1_dajm1"]
-[ext_resource type="Texture2D" uid="uid://bt5asnsw1egy5" path="res://UI/tot-ui-ship2.png" id="2_c7tqi"]
-[ext_resource type="Script" uid="uid://coodjfe30syas" path="res://UI/ui.gd" id="2_cbfhl"]
-[ext_resource type="Texture2D" uid="uid://bko0xykgaa1bo" path="res://UI/tot-ui-loot.png" id="2_dajm1"]
+[ext_resource type="Texture2D" uid="uid://bt5asnsw1egy5" path="res://UI/Pause/tot-ui-ship2.png" id="2_c7tqi"]
+[ext_resource type="Script" uid="uid://coodjfe30syas" path="res://UI/Pause/pause_menu.gd" id="2_cbfhl"]
+[ext_resource type="Texture2D" uid="uid://bko0xykgaa1bo" path="res://UI/Pause/tot-ui-loot.png" id="2_dajm1"]
 [ext_resource type="Texture2D" uid="uid://c1bc20mb7u0bu" path="res://Items/ShipParts/tot-compass.png" id="4_6rr40"]
-[ext_resource type="Texture2D" uid="uid://buv5ht56dmio1" path="res://UI/tot-ui-npc.png" id="4_cbfhl"]
+[ext_resource type="Texture2D" uid="uid://buv5ht56dmio1" path="res://UI/Pause/tot-ui-npc.png" id="4_cbfhl"]
 [ext_resource type="Texture2D" uid="uid://3ei5br8sifpb" path="res://Items/ShipParts/tot-sandglass.png" id="5_0w6e5"]
-[ext_resource type="Texture2D" uid="uid://ckvu0trkmtif" path="res://UI/tot-ui-key.png" id="5_4fiuh"]
-[ext_resource type="Texture2D" uid="uid://d1yvqwhf10oxv" path="res://UI/tot-ui-flippers.png" id="6_h81ot"]
+[ext_resource type="Texture2D" uid="uid://ckvu0trkmtif" path="res://UI/Pause/tot-ui-key.png" id="5_4fiuh"]
+[ext_resource type="Texture2D" uid="uid://d1yvqwhf10oxv" path="res://UI/Pause/tot-ui-flippers.png" id="6_h81ot"]
 [ext_resource type="Texture2D" uid="uid://cigwdkwdfuh6r" path="res://Items/ShipParts/tot-sextant.png" id="6_o2jkc"]
-[ext_resource type="Texture2D" uid="uid://dc65kv76p1tal" path="res://UI/tot-ui-pickaxe.png" id="7_6rr40"]
+[ext_resource type="Texture2D" uid="uid://dc65kv76p1tal" path="res://UI/Pause/tot-ui-pickaxe.png" id="7_6rr40"]
 
 [sub_resource type="Theme" id="Theme_e6gg6"]
 default_font = ExtResource("1_dajm1")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_6rr40"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6rr40"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.7119682, 0.5844294, 0.10391439, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0w6e5"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.7137255, 0.58431375, 0.101960786, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
 
 [node name="UI" type="Control" unique_id=278288620]
 process_mode = 3
@@ -238,24 +262,13 @@ text = "Game Paused"
 [node name="ResumeButton" type="Button" parent="PauseMenu" unique_id=1482285804]
 z_index = 12
 layout_mode = 0
-offset_left = 40.0
-offset_top = -20.0
-offset_right = 87.0
-offset_bottom = 1.0
+offset_left = -12.0
+offset_top = 26.0
+offset_right = 35.0
+offset_bottom = 47.0
+theme_override_styles/hover = SubResource("StyleBoxFlat_6rr40")
 text = "Resume
 "
-metadata/_edit_lock_ = true
-
-[node name="OptionsButton" type="Button" parent="PauseMenu" unique_id=1577977389]
-z_index = 12
-layout_mode = 0
-offset_left = 40.0
-offset_top = 3.0
-offset_right = 87.0
-offset_bottom = 24.0
-text = "Options
-"
-metadata/_edit_lock_ = true
 
 [node name="QuitButton" type="Button" parent="PauseMenu" unique_id=1559815975]
 z_index = 12
@@ -264,10 +277,9 @@ offset_left = 40.0
 offset_top = 26.0
 offset_right = 87.0
 offset_bottom = 47.0
+theme_override_styles/hover = SubResource("StyleBoxFlat_0w6e5")
 text = "Main Menu
 "
-metadata/_edit_lock_ = true
 
 [connection signal="pressed" from="PauseMenu/ResumeButton" to="." method="_on_resume_button_pressed"]
-[connection signal="pressed" from="PauseMenu/OptionsButton" to="." method="_on_options_button_pressed"]
 [connection signal="pressed" from="PauseMenu/QuitButton" to="." method="_on_quit_button_pressed"]

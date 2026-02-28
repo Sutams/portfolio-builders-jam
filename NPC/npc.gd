@@ -1,7 +1,6 @@
 extends Node2D
 
 @export var npc_index : int
-@export var lang : int
 @onready var anim : AnimatedSprite2D = $AnimatedSprite2D
 signal rescue
 var dialogue = [
@@ -24,9 +23,8 @@ var dialogue = [
 	["I saw a mysterious man down there"],
 ]
 
-func create(i : int, lan : int):
+func create(i : int):
 	npc_index = i
-	lang = lan
 	
 func _ready() -> void:
 	anim.play(str(npc_index))

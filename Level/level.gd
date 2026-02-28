@@ -6,7 +6,6 @@ extends Node2D
 @export var flipper_scene : PackedScene
 @export var npc_scene : PackedScene
 @export var ship_part_scene : PackedScene
-@export var swim_level : int = 0
 
 # Nodes to work with
 @onready var tilemap : TileMapLayer = $Ground
@@ -14,14 +13,14 @@ extends Node2D
 @onready var tide_timer : Timer = $TideTimer
 @onready var fall_timer : Timer = $FallTimer
 @onready var player : Area2D = $Player
-@onready var camera : Camera2D = $Camera2D
-@onready var area_camera : Area2D = $Camera2D/AreaCamera
+@onready var camera : Camera2D = $SnapCamera
+@onready var area_camera : Area2D = $SnapCamera/AreaCamera
 @onready var checkpoint_container : Node = $Checkpoints
 @onready var key_container : Node = $Keys
 @onready var flipper_container : Node = $Flippers
 @onready var npc_container : Node = $Npc
 @onready var ship_part_container : Node = $ShipParts
-@onready var pick_up : Control = $Camera2D/PickUp
+@onready var pick_up : Control = $SnapCamera/PickUp
 
 # Constant variables
 const TILE_SIZE : int = 16 # Square tiles of 16px size
@@ -30,7 +29,7 @@ const OFFSET : Vector2 = Vector2(.5,.5)
 # Rest of variables
 var cam_x_offset : int 
 var cam_y_offset : int
-var camera_origin : Vector2
+var camera_origin : Vector2 = Vector2(184,104)
 var camera_vector : Vector2 = Vector2.ZERO
 var spawnpoint : Vector2 = Vector2(1,1)
 var time_in_water : float = 0.0
@@ -40,7 +39,6 @@ var max_tide : int
 var swim_time : float = 0.1
 var max_water_time : float = 0.2
 var lang : int = 0
-
 
 # Tilemap related
 var tilemap_copy : TileMapLayer
@@ -70,14 +68,9 @@ var falling_cells : Array = []
 var rising_cells : Array = []
 
 # Spawn coords
-var key_coords : Array = LevelManager.key_coords
-var flipper_coords : Array = LevelManager.flipper_coords
-var checkpoint_coords : Array = LevelManager.checkpoint_coords
-var npc_coords : Array = LevelManager.npc_coords
-var ship_part_coords : Array = LevelManager.ship_part_coords
-
+var checkpoint_coords : Array
 var checkpoints : Array = []
-var last_visited_checkpoint : Area2D
+
 
 ## Converts a position into tilemap coordinates
 func to_coords(pos: Vector2) -> Vector2:
@@ -88,24 +81,21 @@ func to_coords(pos: Vector2) -> Vector2:
 func _on_last_checkpoint(pos : Vector2):
 	for i in len(checkpoints):
 		if to_coords(pos) == checkpoint_coords[i]:
-			last_visited_checkpoint = checkpoints[i]
+			LevelManager.last_checkpoint = checkpoints[i]
 			pick_up.show_text(pos, "Checkpoint")
 		else:
 			checkpoints[i].deactivate()
 
 ## Removes the key from the scene and list and adds it to the player
-func _on_key_grabbed(pos : Vector2):
-	LevelManager.keys_collected += 1
-	for i in len(key_coords):
-		if to_coords(pos) == key_coords[i]:
-			key_coords.pop_at(i)
-			player.add_key() # Current n° of keys the player has, keys_collected is the total
-			pick_up.show_text(pos, "+Key")
-			return
+func _on_key_collected(pos : Vector2):
+	LevelManager.keys_collected.append(to_coords(pos))
+	LevelManager.player_keys += 1
+	pick_up.show_text(pos, "+Key")
+
 ## Keeping track
 func _on_npc_rescued(pos : Vector2):
-	LevelManager.npc_rescued += 1
-	if LevelManager.npc_rescued == LevelManager.npc_coords.size():
+	LevelManager.npc_rescued.append(to_coords(pos))
+	if LevelManager.npc_rescued.size() == LevelManager.npc_coords.size():
 		LevelManager.check_win()
 		pick_up.show_text(pos, "Rescued Everyone!")
 	else:
@@ -119,17 +109,17 @@ func _on_ship_parts_retrieved(pos : Vector2, part_name : String):
 		pick_up.show_text(pos, "Ship ready to sail!")
 	else:
 		pick_up.show_text(pos, text)
+
 ##
 func _on_loot_collected(pos : Vector2):
-	LevelManager.loot_collected += 1
+	LevelManager.loot_collected.append(to_coords(pos))
 	pick_up.show_text(pos, "+Loot")
+
 ## Adds time to the max water time 
-func swim_level_up():
-	LevelManager.flippers_collected += 1
-	swim_level += 1 # reemplazar
+func _on_flipper_collected():
+	LevelManager.flippers_collected.append(to_coords(player.position))
 	max_water_time += swim_time
 	pick_up.show_text(player.position, "+Flippers")
-
 
 ## Calculates camera vector based on how many times 
 ## the current position fits in the camera offsets
@@ -150,14 +140,11 @@ func camera_vector_range(pos : Vector2):
 ## Changes the player position and moves the camera accordingly
 func respawn():
 	# Sets player position to the last checkpoint or the spawn point
-	if last_visited_checkpoint:
-		player.position = last_visited_checkpoint.position
+	if LevelManager.last_checkpoint:
+		player.position = LevelManager.last_checkpoint.position
+		camera_vector_range(to_coords(player.position))
 	else:
 		player.position = (spawnpoint + OFFSET) * TILE_SIZE
-	# Changes the camera vector to correspondent checkpoint or spawn
-	if last_visited_checkpoint: 
-		camera_vector_range(to_coords(last_visited_checkpoint.position))
-	else:
 		camera_vector.x = 0
 		camera_vector.y = 0
 	move_camera()
@@ -214,7 +201,7 @@ func _on_player_moving() -> void:
 	if tile_above_stood.y in obstacle_tiles or tile_stood.y in obstacle_tiles:
 		player.valid_move = false
 		# Break rock
-		if tile_above_stood.y == type["Rock"] and player.can_mine:
+		if tile_above_stood.y == type["Rock"] and LevelManager.pickaxe_collected:
 			player.valid_move = true
 			tilemap_above.set_cell(next_tilemap_position, -1 , Vector2i(-1,-1))
 		# Opens lock
@@ -223,13 +210,11 @@ func _on_player_moving() -> void:
 				player.valid_move = true
 				_on_loot_collected(player.next_pos)
 				tilemap_above.set_cell(next_tilemap_position, -1 , Vector2i(-1,-1))
-			if player.keys > 0:
+			if LevelManager.player_keys > 0:
 				player.valid_move = true
-				player.key_used()
+				LevelManager.player_keys -= 1
 				_on_loot_collected(player.next_pos)
 				tilemap_above.set_cell(next_tilemap_position, -1 , Vector2i(-1,-1))
-	#elif player.next_pos == $Block.position:
-		#player.valid_move = true
 	else:
 		player.valid_move = true
 	
@@ -257,6 +242,7 @@ func _on_area_camera_area_exited(area: Area2D) -> void:
 	if area.is_in_group("player"):
 		camera_vector_range(to_coords(area.position))
 		move_camera()
+
 ## Makes determined tiles "fall" when stood on and then "rise" when left
 ##
 func _on_fall_timer_timeout() -> void:
@@ -285,18 +271,7 @@ func _on_fall_timer_timeout() -> void:
 				rising_cells.erase(cell)
 
 ##
-##
-##
 func _ready() -> void:
-	# Initialize variables
-	camera_origin = camera.position
-	
-	# Assigns the N° of tiles that fit in the screen
-	cam_x_offset = ProjectSettings.get_setting("display/window/size/viewport_width") / TILE_SIZE
-	cam_y_offset = ProjectSettings.get_setting("display/window/size/viewport_height") / TILE_SIZE
-	camera_vector_range(to_coords(player.position))
-	move_camera()
-	
 	# Create copy tilemap to keep track of original values
 	tilemap_copy = TileMapLayer.new()
 	tilemap_copy.set_tile_map_data_from_array(tilemap.get_tile_map_data_as_array())
@@ -313,7 +288,26 @@ func _ready() -> void:
 		if tile.x > max_tide:
 			max_tide = tile.x
 	
-	# Places the objects in the map
+	# ship_part_coords is a dict with name : position
+	for part_name in LevelManager.ship_part_coords:
+		if LevelManager.ship_part_coords[part_name] not in LevelManager.ship_parts_retrieved:
+			var new_node = ship_part_scene.instantiate()
+			new_node.collect.connect(_on_ship_parts_retrieved)
+			new_node.global_position = (LevelManager.ship_part_coords[part_name] + OFFSET) * TILE_SIZE
+			new_node.create(part_name)
+			ship_part_container.add_child(new_node)
+	
+	var i = 0
+	for coord in LevelManager.npc_coords:
+		if coord not in LevelManager.npc_rescued:
+			var new_node = npc_scene.instantiate()
+			new_node.rescue.connect(_on_npc_rescued)
+			new_node.global_position = (coord + OFFSET) * TILE_SIZE
+			new_node.create(i)
+			npc_container.add_child(new_node)
+		i += 1
+	
+	checkpoint_coords = LevelManager.checkpoint_coords
 	for coord in checkpoint_coords:
 		var new_node = checkpoint_scene.instantiate()
 		new_node.last_visited.connect(_on_last_checkpoint)
@@ -321,64 +315,39 @@ func _ready() -> void:
 		checkpoint_container.add_child(new_node)
 		checkpoints.append(new_node)
 		new_node.owner = get_tree().edited_scene_root
-		
-	for coord in key_coords:
-		var new_node = key_scene.instantiate()
-		new_node.add.connect(_on_key_grabbed)
-		new_node.global_position = (coord + OFFSET) * TILE_SIZE
-		key_container.add_child(new_node)
 	
-	for coord in flipper_coords:
-		var new_node = flipper_scene.instantiate()
-		new_node.activate.connect(swim_level_up)
-		new_node.global_position = (coord + OFFSET) * TILE_SIZE
-		flipper_container.add_child(new_node)
+	for coord in LevelManager.flipper_coords:
+		if coord not in LevelManager.flippers_collected:	
+			var new_node = flipper_scene.instantiate()
+			new_node.activate.connect(_on_flipper_collected)
+			new_node.global_position = (coord + OFFSET) * TILE_SIZE
+			flipper_container.add_child(new_node)
+			
+	for coord in LevelManager.key_coords:
+		if coord not in LevelManager.keys_collected:
+			var new_node = key_scene.instantiate()
+			new_node.add.connect(_on_key_collected)
+			new_node.global_position = (coord + OFFSET) * TILE_SIZE
+			key_container.add_child(new_node)
 	
-	var i = 0
-	for coord in ship_part_coords:
-		var new_node = ship_part_scene.instantiate()
-		new_node.collect.connect(_on_ship_parts_retrieved)
-		new_node.global_position = (coord + OFFSET) * TILE_SIZE
-		new_node.create(i)
-		ship_part_container.add_child(new_node)
-		i += 1
+	for coord in LevelManager.loot_collected:
+		tilemap_above.set_cell(coord, -1 , Vector2i(-1,-1))
 	
-	i = 0
-	for coord in npc_coords:
-		var new_node = npc_scene.instantiate()
-		new_node.rescue.connect(_on_npc_rescued)
-		new_node.global_position = (coord + OFFSET) * TILE_SIZE
-		new_node.create(i, lang)
-		npc_container.add_child(new_node)
-		i += 1
 	
 	# For debug purposes
-	max_water_time = max_water_time + swim_time * swim_level
+	max_water_time = max_water_time + swim_time * LevelManager.flippers_collected.size()
+	
+	camera.zoom = Vector2(1,1)
+	# Assigns the N° of tiles that fit in the screen
+	cam_x_offset = ProjectSettings.get_setting("display/window/size/viewport_width") / TILE_SIZE
+	cam_y_offset = ProjectSettings.get_setting("display/window/size/viewport_height") / TILE_SIZE
+	respawn()
 
 ##
 ##
 func _process(delta: float) -> void:
 	var player_pos = to_coords(player.position)
-	#var reset = Input.is_action_just_pressed("reset")
-	#var interact = Input.is_action_just_pressed("interact")
-	
-	#if reset:
-		#respawn()
-	
-	#if interact:
-		#if player_pos in checkpoint_coords:
-			##
-			#pass
-	
-	# Check if there are blocks in water
-	#if tilemap.get_cell_atlas_coords(to_coords($Block.position)).y in water_tiles:
-		#$Block.in_water = true
-	#else: 
-		#$Block.in_water = false
-	## Check if player standing on blocks
-	#if player.position == $Block.position:
-		#time_in_water = 0
-	
+
 	# Increase timer
 	if tilemap.get_cell_atlas_coords(player_pos).y in water_tiles:
 		time_in_water += delta

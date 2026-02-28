@@ -2,10 +2,6 @@ extends Area2D
 
 const TILE_SIZE : int = 16
 
-@export var keys : int = 0
-@export var can_dive : bool = false
-@export var can_tp : bool = false
-@export var can_mine : bool = false
 @onready var animate = $AnimatedSprite2D
 var next_pos : Vector2
 var valid_move : bool = false
@@ -48,9 +44,3 @@ func _process(delta: float) -> void:
 			animate.play("Idle")
 			idle_time = 0
 	valid_move = false
-
-func add_key():
-	keys += 1
-
-func key_used():
-	keys -= 1

@@ -12,15 +12,16 @@ config_version=5
 
 config/name="Tide on Time"
 config/tags=PackedStringArray("personal_project")
-run/main_scene="uid://cluomjveo6s6o"
+run/main_scene="uid://bji7c0esykfeq"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
 DialogueManager="*uid://dohdji22ur3je"
-LevelManager="*uid://ddic8eo2slmee"
 PickUpManager="*uid://keewhlxg0mhr"
+Global="*uid://de4ae6pf612rp"
+LevelManager="*uid://ddic8eo2slmee"
 
 [display]
 

@@ -8,7 +8,6 @@ extends Control
 @onready var pickaxe_label = $PauseMenu/Pickaxe/PickaxeLabel
 @onready var ship_parts = $PauseMenu/ShipParts
 
-
 var n_ship_parts : int = LevelManager.ship_part_coords.size()
 var n_npcs : int = LevelManager.npc_coords.size()
 var n_flippers : int = LevelManager.flipper_coords.size()
@@ -20,23 +19,20 @@ func _on_resume_button_pressed() -> void:
 	hide()
 	get_tree().paused = false
 
-func _on_options_button_pressed() -> void:
-	pass # Replace with function body.
-
-
 func _on_quit_button_pressed() -> void:
-	pass # Replace with function body.
-	
+	get_tree().paused = false
+	Global.game_controller.change_gui_scene("res://UI/Main/main_menu.tscn")
+	Global.game_controller.remove_2d_scene()
 
 func update_collectibles():
 	for part in ship_parts.get_children():
 		if part.name in LevelManager.ship_parts_retrieved:
 			part.set_deferred("modulate", Color(1,1,1,1))
 	
-	npc_label.text = str(LevelManager.npc_rescued)+"/"+str(n_npcs)
-	flippers_label.text = str(LevelManager.flippers_collected)+"/"+str(n_flippers)
-	key_label.text = str(LevelManager.keys_collected)+"/"+str(n_keys)
-	loot_label.text = str(LevelManager.loot_collected)+"/?"
+	npc_label.text = str(LevelManager.npc_rescued.size())+"/"+str(n_npcs)
+	flippers_label.text = str(LevelManager.flippers_collected.size())+"/"+str(n_flippers)
+	key_label.text = str(LevelManager.keys_collected.size())+"/"+str(n_keys)
+	loot_label.text = str(LevelManager.loot_collected.size())+"/?"
 	pickaxe_label.text = str(LevelManager.pickaxe_collected)+"/"+str(1)
 
 func _ready() -> void:
