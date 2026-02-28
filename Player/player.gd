@@ -4,7 +4,8 @@ const TILE_SIZE : int = 16
 
 @export var keys : int = 0
 @export var can_dive : bool = false
-@export var can_tp : bool = true
+@export var can_tp : bool = false
+@export var can_mine : bool = false
 @onready var animate = $AnimatedSprite2D
 var next_pos : Vector2
 var valid_move : bool = false
@@ -18,6 +19,8 @@ func _process(delta: float) -> void:
 	var move = Input.is_action_just_pressed("move")
 	# Need to check if movement is allowed!
 	# Get the position you'll be in from the map and see if its water 
+	if DialogueManager.is_dialogue_active:
+		return
 	if move:
 		next_pos.x = position.x + move_x * TILE_SIZE
 		next_pos.y = position.y + move_y * TILE_SIZE

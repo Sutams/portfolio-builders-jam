@@ -296,7 +296,7 @@ animations = [{
 size = Vector2(14, 14)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_asys0"]
-size = Vector2(46, 46)
+size = Vector2(80, 80)
 
 [node name="NPC" type="Node2D" unique_id=1198084381]
 script = ExtResource("1_asys0")
@@ -304,7 +304,7 @@ script = ExtResource("1_asys0")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=118784779]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_tj42c")
-animation = &"8"
+animation = &"2"
 metadata/_aseprite_wizard_interface_config_ = {
 "pending_changes": {}
 }

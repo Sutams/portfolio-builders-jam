@@ -1,0 +1,42 @@
+[gd_scene format=3 uid="uid://dxe6wgxumewuk"]
+
+[ext_resource type="Script" uid="uid://keewhlxg0mhr" path="res://UI/PickUp/pick_up.gd" id="1_a2443"]
+[ext_resource type="FontFile" uid="uid://bwp7cpjdjx15i" path="res://UI/Font/m3x6.ttf" id="1_ns4c6"]
+[ext_resource type="Texture2D" uid="uid://cdafgvs8aslh3" path="res://UI/PickUp/textbox_empty.png" id="3_p7wow"]
+
+[node name="TextBox" type="Control" unique_id=158811637]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_a2443")
+
+[node name="NinePatchRect" type="NinePatchRect" parent="." unique_id=479229509]
+visible = false
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("3_p7wow")
+patch_margin_left = 16
+patch_margin_top = 16
+patch_margin_right = 16
+patch_margin_bottom = 16
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1399097674]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label" type="Label" parent="MarginContainer" unique_id=1384886356]
+z_index = 1
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65966684, 0.37427816, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("1_ns4c6")
+theme_override_font_sizes/font_size = 16
+vertical_alignment = 1
+
+[node name="Timer" type="Timer" parent="." unique_id=1689732653]

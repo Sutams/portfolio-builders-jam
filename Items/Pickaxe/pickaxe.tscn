@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://txiqletowe7r"]
+
+[ext_resource type="Script" uid="uid://bkciin8e4grf4" path="res://Items/Pickaxe/pickaxe.gd" id="1_1rwus"]
+[ext_resource type="Texture2D" uid="uid://t3bkw1hv58d7" path="res://Items/Pickaxe/tot-pickaxe.png" id="1_u3wgu"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_i5g78"]
+size = Vector2(14, 14)
+
+[node name="Pickaxe" type="Area2D" unique_id=1841743131]
+script = ExtResource("1_1rwus")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1243303959]
+shape = SubResource("RectangleShape2D_i5g78")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=185246746]
+position = Vector2(-0.99999994, 0.99999994)
+scale = Vector2(0.99999994, 0.99999994)
+texture = ExtResource("1_u3wgu")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
