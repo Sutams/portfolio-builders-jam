@@ -1,0 +1,247 @@
+[gd_scene format=3 uid="uid://dw7wy1rtb8tb"]
+
+[ext_resource type="FontFile" uid="uid://bwp7cpjdjx15i" path="res://UI/Font/m3x6.ttf" id="1_dajm1"]
+[ext_resource type="Texture2D" uid="uid://bt5asnsw1egy5" path="res://UI/tot-ui-ship2.png" id="2_c7tqi"]
+[ext_resource type="Script" uid="uid://coodjfe30syas" path="res://UI/ui.gd" id="2_cbfhl"]
+[ext_resource type="Texture2D" uid="uid://bko0xykgaa1bo" path="res://UI/tot-ui-loot.png" id="2_dajm1"]
+[ext_resource type="Texture2D" uid="uid://buv5ht56dmio1" path="res://UI/tot-ui-npc.png" id="4_cbfhl"]
+[ext_resource type="Texture2D" uid="uid://ckvu0trkmtif" path="res://UI/tot-ui-key.png" id="5_4fiuh"]
+[ext_resource type="Texture2D" uid="uid://d1yvqwhf10oxv" path="res://UI/tot-ui-flippers.png" id="6_h81ot"]
+[ext_resource type="Texture2D" uid="uid://dc65kv76p1tal" path="res://UI/tot-ui-pickaxe.png" id="7_6rr40"]
+
+[sub_resource type="Theme" id="Theme_e6gg6"]
+default_font = ExtResource("1_dajm1")
+
+[node name="UI" type="Control" unique_id=278288620]
+process_mode = 3
+z_index = 10
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_e6gg6")
+script = ExtResource("2_cbfhl")
+
+[node name="PauseMenu" type="Control" parent="." unique_id=183389797]
+process_mode = 2
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ShipParts" type="Control" parent="PauseMenu" unique_id=891020852]
+z_index = 12
+anchors_preset = 0
+offset_left = -101.0
+offset_top = -17.0
+offset_right = -84.0
+offset_bottom = -9.0
+
+[node name="ShipPartLabel" type="Label" parent="PauseMenu/ShipParts" unique_id=1153644933]
+z_index = 12
+layout_mode = 0
+offset_left = 10.0
+offset_top = -4.0
+offset_right = 50.0
+offset_bottom = 19.0
+text = "x3"
+
+[node name="TextureRect" type="TextureRect" parent="PauseMenu/ShipParts" unique_id=1269282984]
+z_index = 12
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+texture = ExtResource("2_c7tqi")
+
+[node name="NPCs" type="Control" parent="PauseMenu" unique_id=1347998673]
+z_index = 12
+anchors_preset = 0
+offset_left = -101.0
+offset_top = -6.0
+offset_right = -84.0
+offset_bottom = 2.0
+
+[node name="NPCLabel" type="Label" parent="PauseMenu/NPCs" unique_id=1054416069]
+z_index = 12
+layout_mode = 0
+offset_left = 10.0
+offset_top = -4.0
+offset_right = 50.0
+offset_bottom = 19.0
+text = "x2"
+
+[node name="TextureRect" type="TextureRect" parent="PauseMenu/NPCs" unique_id=2087028905]
+z_index = 12
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+texture = ExtResource("4_cbfhl")
+
+[node name="Flippers" type="Control" parent="PauseMenu" unique_id=1600723248]
+z_index = 12
+anchors_preset = 0
+offset_left = -101.0
+offset_top = 5.0
+offset_right = -84.0
+offset_bottom = 13.0
+
+[node name="FlipperLabel" type="Label" parent="PauseMenu/Flippers" unique_id=1961472128]
+z_index = 12
+layout_mode = 0
+offset_left = 10.0
+offset_top = -4.0
+offset_right = 50.0
+offset_bottom = 19.0
+text = "x1"
+
+[node name="TextureRect" type="TextureRect" parent="PauseMenu/Flippers" unique_id=1828143458]
+z_index = 12
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+texture = ExtResource("6_h81ot")
+
+[node name="Keys" type="Control" parent="PauseMenu" unique_id=491137128]
+z_index = 12
+anchors_preset = 0
+offset_left = -101.0
+offset_top = 16.0
+offset_right = -84.0
+offset_bottom = 24.0
+
+[node name="KeyLabel" type="Label" parent="PauseMenu/Keys" unique_id=647201472]
+z_index = 12
+layout_mode = 0
+offset_left = 10.0
+offset_top = -4.0
+offset_right = 50.0
+offset_bottom = 19.0
+text = "x0"
+
+[node name="TextureRect" type="TextureRect" parent="PauseMenu/Keys" unique_id=1852261290]
+z_index = 12
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+texture = ExtResource("5_4fiuh")
+
+[node name="Loot" type="Control" parent="PauseMenu" unique_id=1995494281]
+z_index = 12
+anchors_preset = 0
+offset_left = -101.0
+offset_top = 27.0
+offset_right = -84.0
+offset_bottom = 35.0
+
+[node name="LootLabel" type="Label" parent="PauseMenu/Loot" unique_id=179822251]
+z_index = 12
+layout_mode = 0
+offset_left = 10.0
+offset_top = -4.0
+offset_right = 24.0
+offset_bottom = 9.0
+text = "x4"
+
+[node name="TextureRect" type="TextureRect" parent="PauseMenu/Loot" unique_id=1497062168]
+z_index = 12
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.5
+offset_top = -4.5
+offset_right = -0.5
+offset_bottom = 3.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_dajm1")
+expand_mode = 1
+
+[node name="Pickaxe" type="Control" parent="PauseMenu" unique_id=1583045574]
+z_index = 12
+anchors_preset = 0
+offset_left = -101.0
+offset_top = 38.0
+offset_right = -84.0
+offset_bottom = 46.0
+
+[node name="PickaxeLabel" type="Label" parent="PauseMenu/Pickaxe" unique_id=1435730339]
+layout_mode = 0
+offset_left = 10.0
+offset_top = -4.0
+offset_right = 50.0
+offset_bottom = 19.0
+text = "x1"
+
+[node name="TextureRect" type="TextureRect" parent="PauseMenu/Pickaxe" unique_id=270141719]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+texture = ExtResource("7_6rr40")
+
+[node name="ColorRect" type="ColorRect" parent="PauseMenu" unique_id=1326510870]
+z_index = 10
+layout_mode = 0
+offset_left = -184.0
+offset_top = -104.0
+offset_right = 187.0
+offset_bottom = 104.0
+color = Color(0, 0, 0, 0.633)
+
+[node name="ColorRect2" type="ColorRect" parent="PauseMenu" unique_id=27200609]
+z_index = 11
+layout_mode = 0
+offset_left = -104.0
+offset_top = -56.0
+offset_right = 104.0
+offset_bottom = 56.0
+color = Color(0.24115604, 0.24115604, 0.24115604, 1)
+
+[node name="Label" type="Label" parent="PauseMenu" unique_id=1646545257]
+z_index = 12
+layout_mode = 0
+offset_left = -46.0
+offset_top = -52.0
+offset_right = 48.0
+offset_bottom = -26.0
+theme_override_font_sizes/font_size = 32
+text = "Game Paused"
+
+[node name="ResumeButton" type="Button" parent="PauseMenu" unique_id=1482285804]
+z_index = 12
+layout_mode = 0
+offset_left = -24.0
+offset_top = -18.0
+offset_right = 23.0
+offset_bottom = 3.0
+text = "Resume
+"
+
+[node name="OptionsButton" type="Button" parent="PauseMenu" unique_id=1577977389]
+z_index = 12
+layout_mode = 0
+offset_left = -24.0
+offset_top = 5.0
+offset_right = 23.0
+offset_bottom = 26.0
+text = "Options
+"
+
+[node name="QuitButton" type="Button" parent="PauseMenu" unique_id=1559815975]
+z_index = 12
+layout_mode = 0
+offset_left = -24.0
+offset_top = 28.0
+offset_right = 23.0
+offset_bottom = 49.0
+text = "Main Menu
+"
+
+[connection signal="pressed" from="PauseMenu/ResumeButton" to="." method="_on_resume_button_pressed"]
+[connection signal="pressed" from="PauseMenu/OptionsButton" to="." method="_on_options_button_pressed"]
+[connection signal="pressed" from="PauseMenu/QuitButton" to="." method="_on_quit_button_pressed"]

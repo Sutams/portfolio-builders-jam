@@ -4,7 +4,6 @@ extends Node2D
 @export var lang : int
 @onready var anim : AnimatedSprite2D = $AnimatedSprite2D
 signal rescue
-var rescue_dialogue = ["See you at the ship!"]
 var dialogue = [
 	["Those flags save you a lot of time in case you get lost at sea"],
 	["Bet those Flippers would help me swim longer"],
@@ -34,12 +33,9 @@ func _ready() -> void:
 
 func _on_rescue_area_entered(area: Area2D) -> void:
 	if area.is_in_group("player"):
-		#DialogueManager.start_dialogue(global_position, rescue_dialogue)
 		rescue.emit(global_position)
 		queue_free()
 
-
 func _on_talk_area_entered(area: Area2D) -> void:
 	if area.is_in_group("player"):
-		#DialogueManager.start_dialogue(global_position, dialogue[npc_index])
-		pass
+		DialogueManager.start_dialogue(global_position, dialogue[npc_index])

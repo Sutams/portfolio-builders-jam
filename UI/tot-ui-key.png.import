@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://mtbx7wb8g13x"
-path="res://.godot/imported/tot-lock.png-8e380435a89f3e3ce69b4a851235b04e.ctex"
+uid="uid://ckvu0trkmtif"
+path="res://.godot/imported/tot-ui-key.png-c6d7360503bb2067ab72dc18e414ef8b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Items/Key/tot-lock.png"
-dest_files=["res://.godot/imported/tot-lock.png-8e380435a89f3e3ce69b4a851235b04e.ctex"]
+source_file="res://UI/tot-ui-key.png"
+dest_files=["res://.godot/imported/tot-ui-key.png-c6d7360503bb2067ab72dc18e414ef8b.ctex"]
 
 [params]
 
