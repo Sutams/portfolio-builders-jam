@@ -10,11 +10,9 @@ var ship_part_path : Array = [
 	"res://Items/ShipParts/tot-sandglass.png",
 	"res://Items/ShipParts/tot-sextant.png"]
 	
-var ship_part_name : Array = [  
-	[("Compass"),("Sand Glass"),("Sextant")], # EN
-	[("Brújula"),("Reloj de Arena"),("Sextante")], # ES
-]
-var dialogue : Array = ["You grabbed ", "Tomaste "]
+var ship_part_name : Array = [("Compass"),("SandGlass"),("Sextant")] # EN
+	#[("Brújula"),("Reloj de Arena"),("Sextante")], # ES
+var dialogue = "You grabbed "
 
 func create(i : int):
 	ship_part = i
@@ -24,6 +22,5 @@ func _ready() -> void:
 
 func _on_area_entered(area: Area2D) -> void:
 	if area.is_in_group("player"):
-		print(dialogue[lang], ship_part_name[lang][ship_part])
-		collect.emit(global_position, ship_part_name[lang][ship_part])
+		collect.emit(global_position, ship_part_name[ship_part])
 		queue_free()

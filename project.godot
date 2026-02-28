@@ -19,7 +19,8 @@ config/icon="res://icon.svg"
 [autoload]
 
 DialogueManager="*uid://dohdji22ur3je"
-SpawnManager="*uid://ddic8eo2slmee"
+LevelManager="*uid://ddic8eo2slmee"
+PickUpManager="*uid://keewhlxg0mhr"
 
 [display]
 

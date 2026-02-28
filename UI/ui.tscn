@@ -4,13 +4,18 @@
 [ext_resource type="Texture2D" uid="uid://bt5asnsw1egy5" path="res://UI/tot-ui-ship2.png" id="2_c7tqi"]
 [ext_resource type="Script" uid="uid://coodjfe30syas" path="res://UI/ui.gd" id="2_cbfhl"]
 [ext_resource type="Texture2D" uid="uid://bko0xykgaa1bo" path="res://UI/tot-ui-loot.png" id="2_dajm1"]
+[ext_resource type="Texture2D" uid="uid://c1bc20mb7u0bu" path="res://Items/ShipParts/tot-compass.png" id="4_6rr40"]
 [ext_resource type="Texture2D" uid="uid://buv5ht56dmio1" path="res://UI/tot-ui-npc.png" id="4_cbfhl"]
+[ext_resource type="Texture2D" uid="uid://3ei5br8sifpb" path="res://Items/ShipParts/tot-sandglass.png" id="5_0w6e5"]
 [ext_resource type="Texture2D" uid="uid://ckvu0trkmtif" path="res://UI/tot-ui-key.png" id="5_4fiuh"]
 [ext_resource type="Texture2D" uid="uid://d1yvqwhf10oxv" path="res://UI/tot-ui-flippers.png" id="6_h81ot"]
+[ext_resource type="Texture2D" uid="uid://cigwdkwdfuh6r" path="res://Items/ShipParts/tot-sextant.png" id="6_o2jkc"]
 [ext_resource type="Texture2D" uid="uid://dc65kv76p1tal" path="res://UI/tot-ui-pickaxe.png" id="7_6rr40"]
 
 [sub_resource type="Theme" id="Theme_e6gg6"]
 default_font = ExtResource("1_dajm1")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6rr40"]
 
 [node name="UI" type="Control" unique_id=278288620]
 process_mode = 3
@@ -40,15 +45,6 @@ offset_top = -17.0
 offset_right = -84.0
 offset_bottom = -9.0
 
-[node name="ShipPartLabel" type="Label" parent="PauseMenu/ShipParts" unique_id=1153644933]
-z_index = 12
-layout_mode = 0
-offset_left = 10.0
-offset_top = -4.0
-offset_right = 50.0
-offset_bottom = 19.0
-text = "x3"
-
 [node name="TextureRect" type="TextureRect" parent="PauseMenu/ShipParts" unique_id=1269282984]
 z_index = 12
 layout_mode = 0
@@ -56,13 +52,38 @@ offset_right = 8.0
 offset_bottom = 8.0
 texture = ExtResource("2_c7tqi")
 
+[node name="Compass" type="TextureRect" parent="PauseMenu/ShipParts" unique_id=1883600622]
+material = SubResource("ShaderMaterial_6rr40")
+layout_mode = 0
+offset_left = 11.0
+offset_top = -5.0
+offset_right = 31.0
+offset_bottom = 15.0
+texture = ExtResource("4_6rr40")
+
+[node name="SandGlass" type="TextureRect" parent="PauseMenu/ShipParts" unique_id=1517934301]
+layout_mode = 0
+offset_left = 30.0
+offset_top = -4.0
+offset_right = 50.0
+offset_bottom = 16.0
+texture = ExtResource("5_0w6e5")
+
+[node name="Sextant" type="TextureRect" parent="PauseMenu/ShipParts" unique_id=1694568906]
+layout_mode = 0
+offset_left = 50.0
+offset_top = -2.0
+offset_right = 66.0
+offset_bottom = 14.0
+texture = ExtResource("6_o2jkc")
+
 [node name="NPCs" type="Control" parent="PauseMenu" unique_id=1347998673]
 z_index = 12
 anchors_preset = 0
 offset_left = -101.0
-offset_top = -6.0
+offset_top = -1.0
 offset_right = -84.0
-offset_bottom = 2.0
+offset_bottom = 7.0
 
 [node name="NPCLabel" type="Label" parent="PauseMenu/NPCs" unique_id=1054416069]
 z_index = 12
@@ -71,7 +92,7 @@ offset_left = 10.0
 offset_top = -4.0
 offset_right = 50.0
 offset_bottom = 19.0
-text = "x2"
+text = "0"
 
 [node name="TextureRect" type="TextureRect" parent="PauseMenu/NPCs" unique_id=2087028905]
 z_index = 12
@@ -84,9 +105,9 @@ texture = ExtResource("4_cbfhl")
 z_index = 12
 anchors_preset = 0
 offset_left = -101.0
-offset_top = 5.0
+offset_top = 10.0
 offset_right = -84.0
-offset_bottom = 13.0
+offset_bottom = 18.0
 
 [node name="FlipperLabel" type="Label" parent="PauseMenu/Flippers" unique_id=1961472128]
 z_index = 12
@@ -95,7 +116,7 @@ offset_left = 10.0
 offset_top = -4.0
 offset_right = 50.0
 offset_bottom = 19.0
-text = "x1"
+text = "0"
 
 [node name="TextureRect" type="TextureRect" parent="PauseMenu/Flippers" unique_id=1828143458]
 z_index = 12
@@ -108,9 +129,9 @@ texture = ExtResource("6_h81ot")
 z_index = 12
 anchors_preset = 0
 offset_left = -101.0
-offset_top = 16.0
+offset_top = 21.0
 offset_right = -84.0
-offset_bottom = 24.0
+offset_bottom = 29.0
 
 [node name="KeyLabel" type="Label" parent="PauseMenu/Keys" unique_id=647201472]
 z_index = 12
@@ -119,7 +140,7 @@ offset_left = 10.0
 offset_top = -4.0
 offset_right = 50.0
 offset_bottom = 19.0
-text = "x0"
+text = "0"
 
 [node name="TextureRect" type="TextureRect" parent="PauseMenu/Keys" unique_id=1852261290]
 z_index = 12
@@ -132,9 +153,9 @@ texture = ExtResource("5_4fiuh")
 z_index = 12
 anchors_preset = 0
 offset_left = -101.0
-offset_top = 27.0
+offset_top = 32.0
 offset_right = -84.0
-offset_bottom = 35.0
+offset_bottom = 40.0
 
 [node name="LootLabel" type="Label" parent="PauseMenu/Loot" unique_id=179822251]
 z_index = 12
@@ -143,7 +164,7 @@ offset_left = 10.0
 offset_top = -4.0
 offset_right = 24.0
 offset_bottom = 9.0
-text = "x4"
+text = "0"
 
 [node name="TextureRect" type="TextureRect" parent="PauseMenu/Loot" unique_id=1497062168]
 z_index = 12
@@ -166,9 +187,9 @@ expand_mode = 1
 z_index = 12
 anchors_preset = 0
 offset_left = -101.0
-offset_top = 38.0
+offset_top = 43.0
 offset_right = -84.0
-offset_bottom = 46.0
+offset_bottom = 51.0
 
 [node name="PickaxeLabel" type="Label" parent="PauseMenu/Pickaxe" unique_id=1435730339]
 layout_mode = 0
@@ -176,7 +197,7 @@ offset_left = 10.0
 offset_top = -4.0
 offset_right = 50.0
 offset_bottom = 19.0
-text = "x1"
+text = "0"
 
 [node name="TextureRect" type="TextureRect" parent="PauseMenu/Pickaxe" unique_id=270141719]
 layout_mode = 0
@@ -192,6 +213,7 @@ offset_top = -104.0
 offset_right = 187.0
 offset_bottom = 104.0
 color = Color(0, 0, 0, 0.633)
+metadata/_edit_lock_ = true
 
 [node name="ColorRect2" type="ColorRect" parent="PauseMenu" unique_id=27200609]
 z_index = 11
@@ -201,6 +223,7 @@ offset_top = -56.0
 offset_right = 104.0
 offset_bottom = 56.0
 color = Color(0.24115604, 0.24115604, 0.24115604, 1)
+metadata/_edit_lock_ = true
 
 [node name="Label" type="Label" parent="PauseMenu" unique_id=1646545257]
 z_index = 12
@@ -215,32 +238,35 @@ text = "Game Paused"
 [node name="ResumeButton" type="Button" parent="PauseMenu" unique_id=1482285804]
 z_index = 12
 layout_mode = 0
-offset_left = -24.0
-offset_top = -18.0
-offset_right = 23.0
-offset_bottom = 3.0
+offset_left = 40.0
+offset_top = -20.0
+offset_right = 87.0
+offset_bottom = 1.0
 text = "Resume
 "
+metadata/_edit_lock_ = true
 
 [node name="OptionsButton" type="Button" parent="PauseMenu" unique_id=1577977389]
 z_index = 12
 layout_mode = 0
-offset_left = -24.0
-offset_top = 5.0
-offset_right = 23.0
-offset_bottom = 26.0
+offset_left = 40.0
+offset_top = 3.0
+offset_right = 87.0
+offset_bottom = 24.0
 text = "Options
 "
+metadata/_edit_lock_ = true
 
 [node name="QuitButton" type="Button" parent="PauseMenu" unique_id=1559815975]
 z_index = 12
 layout_mode = 0
-offset_left = -24.0
-offset_top = 28.0
-offset_right = 23.0
-offset_bottom = 49.0
+offset_left = 40.0
+offset_top = 26.0
+offset_right = 87.0
+offset_bottom = 47.0
 text = "Main Menu
 "
+metadata/_edit_lock_ = true
 
 [connection signal="pressed" from="PauseMenu/ResumeButton" to="." method="_on_resume_button_pressed"]
 [connection signal="pressed" from="PauseMenu/OptionsButton" to="." method="_on_options_button_pressed"]

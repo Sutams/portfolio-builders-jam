@@ -193,6 +193,7 @@ key_scene = ExtResource("3_1teg4")
 flipper_scene = ExtResource("4_i5g78")
 npc_scene = ExtResource("7_py82k")
 ship_part_scene = ExtResource("7_1p6h5")
+swim_level = 100
 
 [node name="Ground" type="TileMapLayer" parent="." unique_id=1853726450]
 texture_filter = 1

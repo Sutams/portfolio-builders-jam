@@ -25,3 +25,25 @@ var npc_coords : Array = [
 var ship_part_coords : Array = [
 	Vector2(-16,34), Vector2(-11,-22), Vector2(74,14)
 	]
+
+var ship_parts_retrieved : Array = []
+var npc_rescued : int = 0
+var flippers_collected : int = 0
+var keys_collected : int = 0
+var loot_collected : int = 0
+var pickaxe_collected : int = 0
+
+
+
+func check_win():
+	var all_ship_part_retrieved : bool
+	var all_npc_rescued : bool
+	if LevelManager.ship_parts_retrieved.size() == LevelManager.ship_part_coords.size():
+		all_ship_part_retrieved = true
+		
+	if LevelManager.npc_rescued == LevelManager.npc_coords.size():
+		all_npc_rescued = true
+	
+	if all_ship_part_retrieved and all_npc_rescued:
+		pass
+		#win

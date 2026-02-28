@@ -40,9 +40,7 @@ var max_tide : int
 var swim_time : float = 0.1
 var max_water_time : float = 0.2
 var lang : int = 0
-var npc_rescued : int = 0
-var ship_parts_retrieved : int = 0
-var loot_collected : int = 0
+
 
 # Tilemap related
 var tilemap_copy : TileMapLayer
@@ -72,11 +70,11 @@ var falling_cells : Array = []
 var rising_cells : Array = []
 
 # Spawn coords
-var key_coords : Array = SpawnManager.key_coords
-var flipper_coords : Array = SpawnManager.flipper_coords
-var checkpoint_coords : Array = SpawnManager.checkpoint_coords
-var npc_coords : Array = SpawnManager.npc_coords
-var ship_part_coords : Array = SpawnManager.ship_part_coords
+var key_coords : Array = LevelManager.key_coords
+var flipper_coords : Array = LevelManager.flipper_coords
+var checkpoint_coords : Array = LevelManager.checkpoint_coords
+var npc_coords : Array = LevelManager.npc_coords
+var ship_part_coords : Array = LevelManager.ship_part_coords
 
 var checkpoints : Array = []
 var last_visited_checkpoint : Area2D
@@ -97,28 +95,38 @@ func _on_last_checkpoint(pos : Vector2):
 
 ## Removes the key from the scene and list and adds it to the player
 func _on_key_grabbed(pos : Vector2):
+	LevelManager.keys_collected += 1
 	for i in len(key_coords):
 		if to_coords(pos) == key_coords[i]:
 			key_coords.pop_at(i)
-			player.add_key()
+			player.add_key() # Current n° of keys the player has, keys_collected is the total
 			pick_up.show_text(pos, "+Key")
 			return
 ## Keeping track
 func _on_npc_rescued(pos : Vector2):
-	npc_rescued += 1
-	pick_up.show_text(pos, "Crew Rescued")
+	LevelManager.npc_rescued += 1
+	if LevelManager.npc_rescued == LevelManager.npc_coords.size():
+		LevelManager.check_win()
+		pick_up.show_text(pos, "Rescued Everyone!")
+	else:
+		pick_up.show_text(pos, "Crew Rescued")
 ##
-func _on_ship_parts_retrieved(pos : Vector2, name : String):
-	var text = name+" Retrieved"
-	ship_parts_retrieved += 1
-	pick_up.show_text(pos, text)
+func _on_ship_parts_retrieved(pos : Vector2, part_name : String):
+	var text = part_name+" Retrieved"
+	LevelManager.ship_parts_retrieved.append(part_name)
+	if LevelManager.ship_parts_retrieved.size() == LevelManager.ship_part_coords.size():
+		LevelManager.check_win()
+		pick_up.show_text(pos, "Ship ready to sail!")
+	else:
+		pick_up.show_text(pos, text)
 ##
 func _on_loot_collected(pos : Vector2):
-	loot_collected += 1
+	LevelManager.loot_collected += 1
 	pick_up.show_text(pos, "+Loot")
 ## Adds time to the max water time 
 func swim_level_up():
-	swim_level += 1
+	LevelManager.flippers_collected += 1
+	swim_level += 1 # reemplazar
 	max_water_time += swim_time
 	pick_up.show_text(player.position, "+Flippers")
 

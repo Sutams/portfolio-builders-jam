@@ -33,7 +33,7 @@ func start_dialogue(pos : Vector2, lines: Array):
 	is_dialogue_active = true
 
 func _unhandled_input(event: InputEvent) -> void:
-	if (Input.is_anything_pressed()
+	if (event #Input.is_anything_pressed()
 		and is_dialogue_active 
 		and can_advance_line
 	):
